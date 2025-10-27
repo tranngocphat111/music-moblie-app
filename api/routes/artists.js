@@ -1,51 +1,52 @@
+// routes/artists.js
 const express = require("express");
-const fs = require("fs");
-const path = require("path");
-
 const router = express.Router();
-const filePath = path.join(__dirname, "../data/artists.json");
+const Artist = require("../models/Artist"); // Import model Artist
 
-// READ all artists
-router.get("/", (req, res) => {
-  const data = JSON.parse(fs.readFileSync(filePath));
-  res.json(data);
-});
-
-// READ one artist
-router.get("/:id", (req, res) => {
-  const data = JSON.parse(fs.readFileSync(filePath));
-  const artist = data.find(a => a.id === parseInt(req.params.id));
-  res.json(artist || {});
-});
-
-// CREATE artist
-router.post("/", (req, res) => {
-  const data = JSON.parse(fs.readFileSync(filePath));
-  const newArtist = { id: Date.now(), ...req.body };
-  data.push(newArtist);
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-  res.json(newArtist);
-});
-
-// UPDATE artist
-router.put("/:id", (req, res) => {
-  const data = JSON.parse(fs.readFileSync(filePath));
-  const index = data.findIndex(a => a.id === parseInt(req.params.id));
-  if (index !== -1) {
-    data[index] = { ...data[index], ...req.body };
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-    res.json(data[index]);
-  } else {
-    res.status(404).json({ message: "Artist not found" });
+// GET: Lấy TẤT CẢ nghệ sĩ
+router.get("/", async (req, res) => {
+  try {
+    const artists = await Artist.find();
+    res.json(artists);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 
-// DELETE artist
-router.delete("/:id", (req, res) => {
-  const data = JSON.parse(fs.readFileSync(filePath));
-  const newData = data.filter(a => a.id !== parseInt(req.params.id));
-  fs.writeFileSync(filePath, JSON.stringify(newData, null, 2));
-  res.json({ message: "Deleted successfully" });
+// GET: Lấy MỘT nghệ sĩ bằng artist_id
+router.get("/:id", async (req, res) => {
+  try {
+    // Dùng findOne với artist_id thay vì _id của Mongoose
+    const artist = await Artist.findOne({ artist_id: req.params.id }); 
+    if (artist == null) {
+      return res.status(404).json({ message: "Không tìm thấy nghệ sĩ" });
+    }
+    res.json(artist);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
+
+// POST: Tạo một nghệ sĩ mới
+router.post("/", async (req, res) => {
+  const artist = new Artist({
+    _id: req.body._id,
+    artist_id: req.body.artist_id,
+    name: req.body.name,
+    bio: req.body.bio,
+    image_url: req.body.image_url,
+    albums: req.body.albums
+  });
+
+  try {
+    const newArtist = await artist.save();
+    res.status(201).json(newArtist);
+  } catch (err) {
+    // 400 là lỗi do client (ví dụ: thiếu 'name', 'artist_id' bị trùng)
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// (Bạn có thể tự viết tiếp cho PUT để update và DELETE)
 
 module.exports = router;
