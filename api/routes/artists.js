@@ -1,7 +1,7 @@
 // routes/artists.js
 const express = require("express");
 const router = express.Router();
-const Artist = require("../models/Artirst"); // Import model Artist
+const Artist = require("../models/Artist"); // Import model Artist
 
 // GET: Lấy TẤT CẢ nghệ sĩ
 router.get("/", async (req, res) => {
