@@ -1,21 +1,22 @@
-// app/_layout.tsx
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 
 export default function RootLayout() {
   return (
     <>
-      {/* Đặt StatusBar ở đây để áp dụng chung */}
       <StatusBar style="light" />
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(auths)/sign-in" options={{ headerShown: false }} />
-        <Stack.Screen name="(auths)/sign-up" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="(auths)/forgot-password"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name="home" options={{ headerShown: false }} />
+      <Stack screenOptions={{ headerShown: false }}>
+        {/* File app/index.tsx (file test của bạn) */}
+        <Stack.Screen name="index" />
+
+        {/* Đại diện cho TOÀN BỘ nhóm app/(onboarding) */}
+        <Stack.Screen name="(onboarding)" />
+
+        {/* Đại diện cho TOÀN BỘ nhóm app/(auths) */}
+        <Stack.Screen name="(auths)" />
+
+        {/* Bạn sẽ thêm 'home' ở đây NẾU bạn di chuyển app/home.tsx ra ngoài */}
+        {/* <Stack.Screen name="home" /> */}
       </Stack>
     </>
   );

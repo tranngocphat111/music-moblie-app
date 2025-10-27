@@ -26,7 +26,7 @@ export default function SignInScreen() {
 
   const handleLogin = () => {
     // ... (Thêm logic đăng nhập ở đây) ...
-    router.replace("/home");
+    // router.replace("/home");
   };
 
   return (

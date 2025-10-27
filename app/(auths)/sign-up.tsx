@@ -23,7 +23,7 @@ export default function SignUpScreen() {
 
   const handleSignUp = () => {
     // ... (Thêm logic đăng ký ở đây) ...
-    router.replace("/home"); // Chuyển đến màn hình chính
+    // router.replace("/home"); // Chuyển đến màn hình chính
   };
 
   return (
