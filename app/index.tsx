@@ -8,23 +8,33 @@ export default function Index() {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor: "#0a0e27",
       }}
     >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+      <Text style={{ color: "#fff", fontSize: 16 }}>
+        Đây là màn hình Index (trang chính)
+      </Text>
 
-      {/* <Link
-        href="/home/Home"
-        style={{ marginTop: 20, color: "blue", fontSize: 18 }}
+      <Link
+        href="/home/HomeScreen"
+        style={{ marginTop: 20, color: "#1DB954", fontSize: 18 }}
       >
-        Đi tới trang Home
+        👉 Đi tới trang Home
       </Link>
+
       <Link
         href="/search/SearchScreen"
-        style={{ marginTop: 20, color: "blue", fontSize: 18 }}
+        style={{ marginTop: 20, color: "#1DB954", fontSize: 18 }}
       >
-        Đi tới trang Search
-      </Link> */}
-      <Link href="/(onboarding)">heheh</Link>
+        🔍 Đi tới trang Search
+      </Link>
+
+      <Link
+        href="/(onboarding)"
+        style={{ marginTop: 20, color: "#1DB954", fontSize: 18 }}
+      >
+        🚀 Onboarding
+      </Link>
     </View>
   );
 }
