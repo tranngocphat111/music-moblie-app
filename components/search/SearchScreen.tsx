@@ -1,31 +1,44 @@
+import { SearchResult } from "@/types/search/result";
+import { TabType } from "@/types/search/tab";
 import React, { useState } from "react";
 import {
-  Image,
-  Keyboard,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
 } from "react-native";
+import SearchHeader from "./SearchHeader";
+import SearchHistory from "./SearchHistory";
+import SearchResults from "./SearchResults";
+import SearchTabs from "./SearchTabs";
 
-type TabType = "All" | "Artist" | "MV" | "Album" | "Song" | "Playlist";
-
-interface SearchResult {
-  id: string;
-  title: string;
-  artist: string;
-  image: string;
-  type: "song" | "artist" | "album" | "mv";
+interface SearchScreenProps {
+  onClose?: () => void;
+  initialSearchQuery?: string;
+  onSearch?: (query: string) => void;
 }
 
-const SearchScreen = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<TabType>("All");
-  const [isFocused, setIsFocused] = useState(false);
+const SearchScreen: React.FC<SearchScreenProps> = ({ 
+  onClose,
+  initialSearchQuery = "",
+  onSearch
+}) => {
+  const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
+  const [activeTab, setActiveTab] = useState<TabType>("all");
+  const [isFocused, setIsFocused] = useState(true);
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    if (onSearch) {
+      onSearch(query);
+    }
+  };
+
+  const handleCancel = () => {
+    if (onClose) {
+      onClose();
+    }
+  };
 
   // Sample data
   const searchHistory = ["Fall out boy", "Good girl"];
@@ -110,29 +123,6 @@ const SearchScreen = () => {
     },
   ];
 
-  const mvResults: SearchResult[] = [
-    {
-      id: "1",
-      title: "Run Run Run",
-      artist: "Avinci John",
-      image: "https://via.placeholder.com/60/FF69B4/FFFFFF?text=RRR",
-      type: "mv",
-    },
-    {
-      id: "2",
-      title: "Rulia and Remé",
-      artist: "Jeeny Benmy",
-      image: "https://via.placeholder.com/60/FF5722/FFFFFF?text=RR",
-      type: "mv",
-    },
-    {
-      id: "3",
-      title: "Roomate 01",
-      artist: "Chain Smoker",
-      image: "https://via.placeholder.com/60/4CAF50/FFFFFF?text=R01",
-      type: "mv",
-    },
-  ];
 
   const songResults: SearchResult[] = [
     {
@@ -167,126 +157,52 @@ const SearchScreen = () => {
 
   const getResultsForTab = () => {
     switch (activeTab) {
-      case "Album":
+      case "album":
         return albumResults;
-      case "Artist":
+      case "artist":
         return artistResults;
-      case "MV":
-        return mvResults;
-      case "Song":
+      case "song":
         return songResults;
       default:
         return allResults;
     }
   };
 
-  const tabs: TabType[] = ["All", "Artist", "MV", "Album", "Song", "Playlist"];
+  const tabs: TabType[] = ["all", "artist", "album", "song", "playlist"];
 
-  const renderEmptyState = () => (
-    <View style={styles.emptyState}>
-      <Text style={styles.sectionTitle}>History</Text>
-      <View style={styles.chipContainer}>
-        {searchHistory.map((term, index) => (
-          <TouchableOpacity key={index} style={styles.chip}>
-            <Text style={styles.chipText}>{term}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+  // Component moved to search-components/SearchHistory.tsx
 
-      <Text style={styles.sectionTitle}>Top searching</Text>
-      <View style={styles.chipContainer}>
-        {topSearching.map((term, index) => (
-          <TouchableOpacity key={index} style={styles.chip}>
-            <Text style={styles.chipText}>{term}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </View>
-  );
-
-  const renderSearchResults = () => {
-    const results = getResultsForTab();
-
-    return (
-      <View style={styles.resultsContainer}>
-        <Text style={styles.sectionTitle}>Top searching</Text>
-        {results.map((result) => (
-          <TouchableOpacity key={result.id} style={styles.resultItem}>
-            <Image source={{ uri: result.image }} style={styles.resultImage} />
-            <View style={styles.resultInfo}>
-              <Text style={styles.resultTitle}>{result.title}</Text>
-              <Text style={styles.resultArtist}>{result.artist}</Text>
-            </View>
-            <TouchableOpacity style={styles.moreButton}>
-              <Text style={styles.moreButtonText}>⋯</Text>
-            </TouchableOpacity>
-          </TouchableOpacity>
-        ))}
-      </View>
-    );
-  };
+  // Component moved to search-components/SearchResults.tsx
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
 
-      <View style={styles.header}>
-        <View style={styles.searchContainer}>
-          <Text style={styles.searchIcon}>🔍</Text>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search"
-            placeholderTextColor="#666"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-          />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity onPress={() => setSearchQuery("")}>
-              <Text style={styles.clearButton}>✕</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-        {isFocused && (
-          <TouchableOpacity
-            onPress={() => {
-              Keyboard.dismiss();
-              setIsFocused(false);
-            }}
-          >
-            <Text style={styles.cancelButton}>Cancel</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+      <SearchHeader
+        searchQuery={searchQuery}
+        setSearchQuery={handleSearchChange}
+        isFocused={isFocused}
+        setIsFocused={setIsFocused}
+        onCancel={handleCancel}
+        showCancelButton={true}
+      />
 
       {searchQuery.length > 0 && (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.tabContainer}
-        >
-          {tabs.map((tab) => (
-            <TouchableOpacity
-              key={tab}
-              style={[styles.tab, activeTab === tab && styles.activeTab]}
-              onPress={() => setActiveTab(tab)}
-            >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === tab && styles.activeTabText,
-                ]}
-              >
-                {tab}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+        <SearchTabs
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
       )}
 
       <ScrollView style={styles.content}>
-        {searchQuery.length === 0 ? renderEmptyState() : renderSearchResults()}
+        {searchQuery.length === 0 ? (
+          <SearchHistory
+            searchHistory={searchHistory}
+            topSearching={topSearching}
+          />
+        ) : (
+          <SearchResults results={getResultsForTab()} />
+        )}
       </ScrollView>
     </SafeAreaView>
   );

@@ -6,14 +6,13 @@ import {
   Image,
   ImageBackground,
   Modal,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { PlayerControls } from "./PlayerControls";
 
 const { width, height } = Dimensions.get("window");
