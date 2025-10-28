@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-
+const { v4: uuidv4 } = require("uuid");
 // Đây là các schema cho các mảng lồng nhau
 const SongSchema = new Schema({
   song_id: Number,
@@ -23,7 +23,12 @@ const PlaylistSchema = new Schema({
 // Đây là schema chính cho User
 const UserSchema = new Schema(
   {
-    user_id: { type: Number, required: true, unique: true },
+    user_id: {
+      type: String,
+      required: true,
+      unique: true,
+      default: uuidv4,
+    },
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -36,5 +41,10 @@ const UserSchema = new Schema(
   { collection: "users" }
 ); // Tên collection (bảng) trong database
 
-// Tạo và export model
+UserSchema.pre("save", function (next) {
+  if (!this.user_id) {
+    this.user_id = uuidv4();
+  }
+  next();
+});
 module.exports = mongoose.model("User", UserSchema);

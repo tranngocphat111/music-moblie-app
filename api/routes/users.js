@@ -31,6 +31,10 @@ router.get("/:id", async (req, res) => {
 router.post("/sign-up", async (req, res) => {
   try {
     const existingUser = await User.findOne({ email: req.body.email });
+    const maxUser = await User.findOne()
+      .sort({ user_id: -1 })
+      .select("user_id");
+    const maxId = maxUser ? maxUser.user_id : 0;
     if (existingUser) {
       return res.status(400).json({ message: "Email đã được sử dụng." });
     }
@@ -46,7 +50,12 @@ router.post("/sign-up", async (req, res) => {
     const newUser = await user.save();
 
     const token = jwt.sign(
-      { _id: newUser._id, username: newUser.username },
+      {
+        _id: newUser._id,
+        user_id: newUser.user_id,
+        username: newUser.username,
+        email: newUser.email,
+      },
       JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -55,6 +64,7 @@ router.post("/sign-up", async (req, res) => {
       token,
       user: {
         _id: newUser._id,
+        user_id: newUser.user_id,
         username: newUser.username,
         email: newUser.email,
       },
