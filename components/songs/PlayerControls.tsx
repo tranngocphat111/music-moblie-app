@@ -64,7 +64,7 @@ export function PlayerControls({
           <Ionicons
             name={isPlaying ? "pause" : "play"}
             size={36}
-            color="#000"
+            color="white"
             style={{ marginLeft: isPlaying ? 0 : 4 }}
           />
         </TouchableOpacity>

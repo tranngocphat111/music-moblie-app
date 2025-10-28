@@ -18,9 +18,6 @@ import { PlayerControls } from "./PlayerControls";
 const { width, height } = Dimensions.get("window");
 
 const ESTIMATED_HEADER_HEIGHT = 50;
-const ESTIMATED_CONTROLS_HEIGHT = 120;
-const ESTIMATED_LYRICS_TITLE_HEIGHT = 50;
-const ESTIMATED_LYRIC_LINE_HEIGHT = 40;
 
 type Song = any;
 type LyricLine = {
@@ -63,10 +60,12 @@ export function PlayerModal({
   const [isUserScrolling, setIsUserScrolling] = useState(false);
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const rotateAnim = useRef(new Animated.Value(0)).current;
+  const lyricPositions = useRef<number[]>([]).current;
 
   // Reset rotation when song changes
   useEffect(() => {
     rotateAnim.setValue(0);
+    lyricPositions.length = 0; // Reset lyric positions when song changes
   }, [selectedSong?.song_id]);
 
   // Rotate the album cover when playing
@@ -128,20 +127,14 @@ export function PlayerModal({
       activePageIndex === 1 &&
       selectedSong?.lyric &&
       scrollViewLayout.height > 0 &&
-      !isUserScrolling // Only auto-scroll if user is not manually scrolling
+      !isUserScrolling &&
+      lyricPositions[currentLyricIndex] !== undefined
     ) {
-      // Calculate responsive line height based on screen size
-      const fontSize = width > 400 ? 20 : 18;
-      const lineHeight = width > 400 ? 20 : 18;
-      const marginBottom = height * 0.032; // Responsive margin
-      const estimatedLineHeight = fontSize + marginBottom;
-
-      // Calculate the Y position of the current lyric line from the top of content
-      const currentLyricY = currentLyricIndex * estimatedLineHeight;
+      // Use actual measured position instead of estimation
+      const currentLyricY = lyricPositions[currentLyricIndex];
 
       // To center the current line in the middle of the viewport:
-      const targetScrollY =
-        currentLyricY - scrollViewLayout.height / 2 + estimatedLineHeight / 2;
+      const targetScrollY = currentLyricY - scrollViewLayout.height / 2;
 
       lyricScrollViewRef.current?.scrollTo({
         y: Math.max(0, targetScrollY),
@@ -154,6 +147,7 @@ export function PlayerModal({
     selectedSong,
     scrollViewLayout.height,
     isUserScrolling,
+    lyricPositions,
   ]);
 
   // Cleanup timeout on unmount
@@ -241,6 +235,10 @@ export function PlayerModal({
               key={index}
               onPress={() => handleLyricPress(line.time, index)}
               activeOpacity={0.7}
+              onLayout={(event) => {
+                // Measure actual position of each lyric line
+                lyricPositions[index] = event.nativeEvent.layout.y;
+              }}
             >
               <Text
                 style={[
