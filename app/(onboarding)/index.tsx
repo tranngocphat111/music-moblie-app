@@ -63,7 +63,7 @@ export default function OnboardingScreen() {
   }
 
   if (hasSeenOnboarding === true) {
-    return null; 
+    return null;
   }
 
   return (

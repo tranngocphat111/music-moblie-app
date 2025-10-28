@@ -29,7 +29,7 @@ export default function SignUpForm() {
 
     try {
       await signUp({ username: name, email, password });
-      Alert.alert("Thành công", "Đăng ký thành công! Bạn đã được đăng nhập.");
+      Alert.alert("Thành công", "Đăng ký thành công!");
       router.replace("/sign-in");
     } catch (err) {
       Alert.alert(
