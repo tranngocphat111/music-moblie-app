@@ -1,0 +1,1 @@
+export const API_URL = "https://music-moblie-app.onrender.com";
