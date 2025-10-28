@@ -2,8 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User"); // <-- 1. Import model
-
-// READ (GET) tất cả user
+const bcrypt = require("bcrypt");
 router.get("/", async (req, res) => {
   try {
     const users = await User.find(); // Tìm tất cả user
@@ -13,10 +12,9 @@ router.get("/", async (req, res) => {
   }
 });
 
-// READ (GET) một user theo ID
 router.get("/:id", async (req, res) => {
   try {
-    const user = await User.findOne({ user_id: req.params.id }); // Tìm theo user_id
+    const user = await User.findOne({ user_id: req.params.id });
     if (user == null) {
       return res.status(404).json({ message: "Cannot find user" });
     }
@@ -26,18 +24,18 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// CREATE (POST) một user mới
 router.post("/", async (req, res) => {
-  const user = new User({
-    _id: req.body._id,
-    user_id: req.body.user_id,
-    username: req.body.username,
-    email: req.body.email,
-    // ...thêm các trường khác
-  });
-
   try {
-    const newUser = await user.save(); // Lưu vào database
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+    const user = new User({
+      user_id: req.body.user_id,
+      username: req.body.username,
+      email: req.body.email,
+      password: hashedPassword,
+    });
+
+    const newUser = await user.save();
     res.status(201).json(newUser);
   } catch (err) {
     res.status(400).json({ message: err.message });

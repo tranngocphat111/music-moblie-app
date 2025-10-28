@@ -1,5 +1,5 @@
-import { Link } from "expo-router";
-import { Text, View } from "react-native";
+import { Link, router } from "expo-router";
+import { Text, TouchableOpacity, View } from "react-native";
 
 export default function Index() {
   return (
@@ -22,12 +22,6 @@ export default function Index() {
         👉 Đi tới trang Home
       </Link>
 
-      <Link
-        href="/search/SearchScreen"
-        style={{ marginTop: 20, color: "#1DB954", fontSize: 18 }}
-      >
-        🔍 Đi tới trang Search
-      </Link>
 
       <Link
         href="/(onboarding)"
@@ -41,6 +35,12 @@ export default function Index() {
       >
         🎵 Songs
       </Link>
+      <TouchableOpacity
+        onPress={() => router.push("/(account)")}
+        style={{ marginTop: 20 }}
+      >
+        <Text style={{ color: "#1DB954", fontSize: 18 }}>🎵 Account</Text>
+      </TouchableOpacity>
     </View>
   );
 }
