@@ -19,7 +19,6 @@ import NewAlbums from "@/components/NewAlbums";
 import NowPlayingBar from "@/components/NowPlayingBar";
 import RecentlyMusic from "@/components/RecentlyMusic";
 import TabBar from "@/components/TabBar";
-import { useFetchSongs } from "@/hooks/useFetchSongs";
 
 
 const styles = StyleSheet.create({
@@ -52,9 +51,7 @@ const styles = StyleSheet.create({
 });
 
 const HomeScreen: React.FC = () => {
-  // Logic gọi API đã được chuyển vào hook `useFetchSongs`
-  const { songs, isLoading, error } = useFetchSongs();
-
+  
   return (
     <SafeAreaView style={styles.safeArea}>
       <Stack.Screen options={{ headerShown: false }} />
@@ -67,7 +64,7 @@ const HomeScreen: React.FC = () => {
         <AppHeader />
         <NewAlbums />
         <GeezWeekly />
-        <RecentlyMusic songs={songs} isLoading={isLoading} error={error} />
+        <RecentlyMusic />
       </ScrollView>
 
       <NowPlayingBar />

@@ -1,92 +1,95 @@
 import { COLORS } from "@/constants/Colors";
-import { Album } from "@/types";
+import { useFetchAlbums } from "@/hooks/useFetchAlbums";
 import {
-    FlatList,
-    ImageBackground,
-    StyleSheet,
-    Text,
-    View,
+  FlatList,
+  Platform,
+  StyleSheet,
+  Text, // <-- Thêm Text để báo lỗi
+  View,
 } from "react-native";
+
+import { AlbumCard } from "./AlbumCart";
 import SectionHeader from "./SectionHeader";
 
+// Chỉ giữ lại styles mà NewAlbums cần
 const styles = StyleSheet.create({
   sectionContainer: {
-    marginBottom: 10,
+    marginBottom: 16,
+    minHeight: 190, // Đặt chiều cao để không bị giật khi load
+    paddingVertical: 8, // Thêm padding dọc
   },
-  albumCard: {
+  loadingCard: {
     width: 150,
     height: 150,
     marginRight: 16,
+    borderRadius: 20,
+    backgroundColor: COLORS.card, // Dùng màu card thay vì secondary
+    opacity: 0.7,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
   },
-  albumImage: {
-    width: "100%",
-    height: "100%",
-    justifyContent: "flex-end",
-  },
-  albumTextOverlay: {
-    padding: 12,
-    backgroundColor: "rgba(0,0,0,0.2)",
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-  },
-  albumTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: COLORS.primaryText,
-  },
-  albumArtist: {
-    fontSize: 12,
-    color: COLORS.primaryText,
-  },
+  errorText: {
+    color: COLORS.error,
+    paddingHorizontal: 16,
+    marginTop: 20,
+  }
 });
 
-const newAlbums: Album[] = [
-  {
-    id: "1",
-    title: "Pray For You",
-    artist: "The Weeknd",
-    image:
-      "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=150&h=150&fit=crop",
-  },
-  {
-    id: "2",
-    title: "Dua Lipa",
-    artist: "Future Nostalgia",
-    image:
-      "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=150&h=150&fit=crop",
-  },
-  {
-    id: "3",
-    title: "After Hours",
-    artist: "The Weeknd",
-    image: "https://via.placeholder.com/150/FFD700/FFFFFF?Text=Album3",
-  },
-];
+const NewAlbums: React.FC = () => {
+  const { albums, isLoading, error: errorAlbums } = useFetchAlbums();
 
-const NewAlbums: React.FC = () => (
-  <View style={styles.sectionContainer}>
-    <SectionHeader title="New Albums" />
+  // Xóa toàn bộ logic animation khỏi đây
+
+  // Hàm render skeleton (loading)
+  const renderLoading = () => (
     <FlatList
-      data={newAlbums}
+      data={Array(5).fill(0)} // Tạo 5 thẻ loading
       horizontal
       showsHorizontalScrollIndicator={false}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(_, index) => index.toString()}
+      renderItem={() => <View style={styles.loadingCard} />}
+    />
+  );
+
+  // Hàm render khi có data
+  const renderList = () => (
+    <FlatList
+      data={albums}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      keyExtractor={(item) => item.id.toString()}
+      // Chỉ cần render component con
       renderItem={({ item }): React.ReactElement => (
-        <View style={styles.albumCard}>
-          <ImageBackground
-            source={{ uri: item.image }}
-            style={styles.albumImage}
-            imageStyle={{ borderRadius: 20 }}
-          >
-            <View style={styles.albumTextOverlay}>
-              <Text style={styles.albumTitle}>{item.title}</Text>
-              <Text style={styles.albumArtist}>{item.artist}</Text>
-            </View>
-          </ImageBackground>
-        </View>
+        <AlbumCard item={item} />
       )}
     />
-  </View>
-);
+  );
+
+  // Hàm render khi có lỗi
+  const renderError = () => (
+      <Text style={styles.errorText}>
+          Lỗi khi tải albums: {errorAlbums}
+      </Text>
+  );
+
+  return (
+    <View style={styles.sectionContainer}>
+      <SectionHeader title="New Albums" />
+      {/* Logic render 3 trạng thái: Loading, Error, Success */}
+      {isLoading ? renderLoading() : (
+          errorAlbums ? renderError() : renderList()
+      )}
+    </View>
+  );
+};
 
 export default NewAlbums;

@@ -6,4 +6,5 @@ export const COLORS = {
     accent: "#CFFF50",
     tabBar: "#100C2A",
     error: "#FF6B6B",
+    secondaryBackground: "#1C183A",
   };
