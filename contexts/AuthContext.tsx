@@ -11,14 +11,13 @@ import {
   registerUser,
   User,
   AuthResponse,
-  fetchUserByToken, 
-} from "../services/authService"; 
+  fetchUserByToken,
+} from "../services/authService";
 
 interface AuthCredentials {
   email: string;
   password: string;
 }
-
 
 interface AuthContextType {
   user: User | null;
@@ -78,7 +77,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     setIsLoading(true);
     setError(null); // Xóa lỗi cũ
     try {
-      // Giả định loginUser(email, password) là đúng
       const data: AuthResponse = await loginUser(email, password);
 
       await SecureStore.setItemAsync("userToken", data.token);
@@ -91,7 +89,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
           ? error
           : new Error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
       setError(err);
-      throw err; 
+      throw err;
     } finally {
       setIsLoading(false);
     }
@@ -99,12 +97,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   const signUp = async (data: any): Promise<User> => {
     setIsLoading(true);
-    setError(null); // Xóa lỗi cũ
+    setError(null);
     try {
-
       const response: AuthResponse = await registerUser(data);
-
-      await SecureStore.setItemAsync("userToken", response.token);
       setToken(response.token);
       setUser(response.user);
       return response.user;
@@ -146,7 +141,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     </AuthContext.Provider>
   );
 };
-
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);

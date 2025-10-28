@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useAuth } from "../../contexts/AuthContext"; 
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -28,13 +28,10 @@ export default function SignUpForm() {
     }
 
     try {
-      // 2. Gọi hàm đăng ký từ Context
-      await signUp({ username: name, email, password }); // Giả định API/Context dùng 'username'
-
-
-      Alert.alert("Thành công", "Đăng ký thành công! Bạn đã được đăng nhập.");
+      await signUp({ username: name, email, password });
+      Alert.alert("Thành công", "Đăng ký thành công!");
+      router.replace("/sign-in");
     } catch (err) {
-      // 3. Xử lý lỗi
       Alert.alert(
         "Lỗi Đăng Ký",
         error?.message ||

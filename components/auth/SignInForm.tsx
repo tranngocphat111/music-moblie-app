@@ -6,8 +6,8 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  ActivityIndicator, // <--- THÊM: Để hiển thị trạng thái tải
-  Alert, // <--- THÊM: Để hiển thị cảnh báo
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -15,7 +15,6 @@ import { useAuth } from "../../contexts/AuthContext"; // <--- THÊM: Import Auth
 
 export default function SignInForm() {
   const router = useRouter();
-  // Lấy các hàm và trạng thái từ AuthContext
   const { signIn, isLoading, error } = useAuth(); // <--- THAY ĐỔI
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,9 +25,9 @@ export default function SignInForm() {
       Alert.alert("Lỗi", "Vui lòng điền đầy đủ email và mật khẩu.");
       return;
     }
-
     try {
       await signIn({ email, password });
+      router.push("/home-screen");
     } catch (err) {
       Alert.alert(
         "Lỗi Đăng Nhập",
