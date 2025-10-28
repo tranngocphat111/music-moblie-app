@@ -30,6 +30,11 @@ router.get("/:id", async (req, res) => {
 
 router.post("/sign-up", async (req, res) => {
   try {
+    const existingUser = await User.findOne({ email: req.body.email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email đã được sử dụng." });
+    }
+
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
     const user = new User({
@@ -39,9 +44,23 @@ router.post("/sign-up", async (req, res) => {
     });
 
     const newUser = await user.save();
-    res.status(201).json(newUser);
+
+    const token = jwt.sign(
+      { _id: newUser._id, username: newUser.username },
+      JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.status(201).json({
+      token,
+      user: {
+        _id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+      },
+    });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ message: err.message || "Đăng ký thất bại." });
   }
 });
 

@@ -2,7 +2,6 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface PlayerControlsProps {
   isPlaying: boolean;
@@ -11,6 +10,8 @@ interface PlayerControlsProps {
   onSeekStart: () => void;
   onSeekComplete: (value: number) => void;
   onPlayPausePress: () => void;
+  onNext: () => void;
+  onPrevious: () => void;
 }
 
 const formatTime = (millis: number) => {
@@ -27,16 +28,11 @@ export function PlayerControls({
   onSeekStart,
   onSeekComplete,
   onPlayPausePress,
+  onNext,
+  onPrevious,
 }: PlayerControlsProps) {
-  const insets = useSafeAreaInsets();
-
   return (
-    <View
-      style={[
-        styles.controlsWrapper,
-        { paddingBottom: Math.max(insets.bottom + 10, 20) },
-      ]}
-    >
+    <View style={styles.controlsWrapper}>
       <View style={styles.sliderContainer}>
         <Text style={styles.timeText}>{formatTime(positionMillis)}</Text>
 
@@ -60,19 +56,20 @@ export function PlayerControls({
           <MaterialCommunityIcons name="shuffle" size={28} color="white" />
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={onPrevious}>
           <Ionicons name="play-skip-back" size={32} color="white" />
         </TouchableOpacity>
 
         <TouchableOpacity onPress={onPlayPausePress} style={styles.playButton}>
           <Ionicons
-            name={isPlaying ? "pause-outline" : "play-outline"}
-            size={40}
-            color="#000"
+            name={isPlaying ? "pause" : "play"}
+            size={32}
+            color="#fff"
+            style={{ marginLeft: isPlaying ? 0 : 3 }}
           />
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={onNext}>
           <Ionicons name="play-skip-forward" size={32} color="white" />
         </TouchableOpacity>
 
@@ -86,16 +83,12 @@ export function PlayerControls({
 
 const styles = StyleSheet.create({
   controlsWrapper: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
+    width: "100%",
     backgroundColor: "#0c0c0f",
     paddingTop: 15,
-    paddingBottom: 30,
+    paddingBottom: 20,
     borderTopWidth: 1,
     borderTopColor: "#1e1e1e",
-    height: 120,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.2,
@@ -125,10 +118,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   playButton: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: "#9DFE00",
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: "transparent",
+    borderWidth: 2,
+    borderColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 20,

@@ -24,7 +24,6 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   isLoading: boolean;
-  // THAY ĐỔI: Hàm signIn và signUp nhận một đối tượng Credentials
   signIn: (credentials: AuthCredentials) => Promise<User>;
   signUp: (data: any) => Promise<User>; // Giữ data: any cho đến khi định nghĩa rõ ràng
   signOut: () => Promise<void>;
@@ -53,13 +52,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         const storedToken = await SecureStore.getItemAsync("userToken");
         if (storedToken) {
           setToken(storedToken);
-          // THỰC HIỆN: Gọi API để fetch user info dựa trên token để xác thực lại
           try {
-            // Giả định fetchUserByToken là hàm gọi API để lấy thông tin user từ token
             const fetchedUser = await fetchUserByToken(storedToken);
             setUser(fetchedUser);
           } catch (e) {
-            // Nếu token không hợp lệ hoặc hết hạn, xóa token và đăng xuất
             console.error("Token không hợp lệ hoặc hết hạn:", e);
             await SecureStore.deleteItemAsync("userToken");
             setToken(null);
@@ -75,7 +71,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     loadInitialState();
   }, []);
 
-  // THAY ĐỔI: Hàm signIn nhận đối tượng và trích xuất email/password
   const signIn = async ({
     email,
     password,
@@ -91,24 +86,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       setUser(data.user);
       return data.user;
     } catch (error: any) {
-      // Thiết lập lỗi
       const err =
         error instanceof Error
           ? error
           : new Error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
       setError(err);
-      throw err; // Ném lỗi để component SignInForm có thể xử lý (ví dụ: Alert)
+      throw err; 
     } finally {
       setIsLoading(false);
     }
   };
 
-  // THAY ĐỔI: Hàm signUp nhận đối tượng và trích xuất email/password (hoặc các trường khác)
   const signUp = async (data: any): Promise<User> => {
     setIsLoading(true);
     setError(null); // Xóa lỗi cũ
     try {
-      // Giả định registerUser(data) là đúng
+
       const response: AuthResponse = await registerUser(data);
 
       await SecureStore.setItemAsync("userToken", response.token);
@@ -147,14 +140,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         signOut,
         error,
         clearError,
-      }} // THAY ĐỔI: Thêm error và clearError
+      }}
     >
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Custom Hook để sử dụng Context
+
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
