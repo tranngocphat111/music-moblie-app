@@ -32,10 +32,6 @@ router.get("/:id", async (req, res) => {
 router.post("/sign-up", async (req, res) => {
   try {
     const existingUser = await User.findOne({ email: req.body.email });
-    const maxUser = await User.findOne()
-      .sort({ user_id: -1 })
-      .select("user_id");
-    const maxId = maxUser ? maxUser.user_id : 0;
     if (existingUser) {
       return res.status(400).json({ message: "Email đã được sử dụng." });
     }
