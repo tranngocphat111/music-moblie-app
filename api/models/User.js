@@ -23,7 +23,6 @@ const PlaylistSchema = new Schema({
 // Đây là schema chính cho User
 const UserSchema = new Schema(
   {
-    _id: String, // Dùng _id của bạn làm khóa chính
     user_id: { type: Number, required: true, unique: true },
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
