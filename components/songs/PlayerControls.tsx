@@ -41,9 +41,9 @@ export function PlayerControls({
           value={positionMillis}
           minimumValue={0}
           maximumValue={durationMillis}
-          minimumTrackTintColor="#9DFE00"
+          minimumTrackTintColor="#1DB954"
           maximumTrackTintColor="#555"
-          thumbTintColor="#9DFE00"
+          thumbTintColor="#1DB954"
           onSlidingStart={onSeekStart}
           onSlidingComplete={onSeekComplete}
         />
@@ -52,29 +52,29 @@ export function PlayerControls({
       </View>
 
       <View style={styles.controlsContainer}>
-        <TouchableOpacity>
-          <MaterialCommunityIcons name="shuffle" size={28} color="white" />
+        <TouchableOpacity style={styles.iconButton}>
+          <MaterialCommunityIcons name="shuffle" size={24} color="#b3b3b3" />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={onPrevious}>
-          <Ionicons name="play-skip-back" size={32} color="white" />
+        <TouchableOpacity onPress={onPrevious} style={styles.iconButton}>
+          <Ionicons name="play-skip-back" size={28} color="white" />
         </TouchableOpacity>
 
         <TouchableOpacity onPress={onPlayPausePress} style={styles.playButton}>
           <Ionicons
             name={isPlaying ? "pause" : "play"}
-            size={32}
-            color="#fff"
-            style={{ marginLeft: isPlaying ? 0 : 3 }}
+            size={36}
+            color="white"
+            style={{ marginLeft: isPlaying ? 0 : 4 }}
           />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={onNext}>
-          <Ionicons name="play-skip-forward" size={32} color="white" />
+        <TouchableOpacity onPress={onNext} style={styles.iconButton}>
+          <Ionicons name="play-skip-forward" size={28} color="white" />
         </TouchableOpacity>
 
-        <TouchableOpacity>
-          <MaterialCommunityIcons name="repeat" size={28} color="white" />
+        <TouchableOpacity style={styles.iconButton}>
+          <MaterialCommunityIcons name="repeat" size={24} color="#b3b3b3" />
         </TouchableOpacity>
       </View>
     </View>
@@ -84,48 +84,54 @@ export function PlayerControls({
 const styles = StyleSheet.create({
   controlsWrapper: {
     width: "100%",
-    backgroundColor: "#0c0c0f",
-    paddingTop: 15,
+    paddingTop: 20,
     paddingBottom: 20,
-    borderTopWidth: 1,
-    borderTopColor: "#1e1e1e",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
   },
   sliderContainer: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
-    marginBottom: 10,
+    marginBottom: 20,
   },
   slider: {
     flex: 1,
     marginHorizontal: 10,
   },
   timeText: {
-    fontSize: 12,
-    color: "#ccc",
-    width: 40,
+    fontSize: 13,
+    color: "#b3b3b3",
+    width: 45,
     textAlign: "center",
+    fontWeight: "500",
   },
   controlsContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-  playButton: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: "transparent",
-    borderWidth: 2,
-    borderColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 20,
+    paddingHorizontal: 20,
+    gap: 15,
+  },
+  iconButton: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  playButton: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: "#1DB954",
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 10,
+    shadowColor: "#1DB954",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 8,
   },
 });
