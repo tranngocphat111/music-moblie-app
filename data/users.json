@@ -1,212 +1,202 @@
 [
-    {
-        "_id": "user_1",
-        "user_id": 1,
-        "username": "user1",
-        "email": "user1@gmail.com",
-        "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555297/avatar_9_hzcogb.png",
-        "created_at": "2025-10-27T09:00:00",
-        "playlists": [
-            {
-                "playlist_id": 1,
-                "name": "Nhạc yêu thích",
-                "created_at": "2025-10-27T10:10:00",
-                "songs": [
-                    {
-                        "song_id": 1,
-                        "title": "Muộn Rồi Mà Sao Còn"
-                    },
-                    {
-                        "song_id": 2,
-                        "title": "Chúng Ta Của Hiện Tại"
-                    },
-                    {
-                        "song_id": 3,
-                        "title": "Nơi Này Có Anh"
-                    }
-                ]
-            }
-        ],
-        "favorite_songs": [
-            {
-                "song_id": 1,
-                "title": "Muộn Rồi Mà Sao Còn"
-            },
-            {
-                "song_id": 3,
-                "title": "Nơi Này Có Anh"
-            }
-        ],
-        "listen_history": [
-            {
-                "song_id": 1,
-                "title": "Muộn Rồi Mà Sao Còn",
-                "listened_at": "2025-10-27T09:45:00"
-            },
-            {
-                "song_id": 2,
-                "title": "Chúng Ta Của Hiện Tại",
-                "listened_at": "2025-10-27T09:50:00"
-            }
+  {
+    "user_id": 1,
+    "username": "user1",
+    "email": "user1@gmail.com",
+    "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555297/avatar_9_hzcogb.png",
+    "created_at": "2025-10-27T09:00:00",
+    "playlists": [
+      {
+        "playlist_id": 1,
+        "name": "Nhạc yêu thích",
+        "created_at": "2025-10-27T10:10:00",
+        "songs": [
+          {
+            "song_id": 1,
+            "title": "Muộn Rồi Mà Sao Còn"
+          },
+          {
+            "song_id": 2,
+            "title": "Chúng Ta Của Hiện Tại"
+          },
+          {
+            "song_id": 3,
+            "title": "Nơi Này Có Anh"
+          }
         ]
-    },
-    {
-        "_id": "user_2",
-        "user_id": 2,
-        "username": "user2",
-        "email": "user2@gmail.com",
-        "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555297/avatar_6_jocz2m.png",
-        "created_at": "2025-10-27T09:05:00",
-        "playlists": [
-            {
-                "playlist_id": 2,
-                "name": "Rap chill",
-                "created_at": "2025-10-27T10:15:00",
-                "songs": [
-                    {
-                        "song_id": 6,
-                        "title": "Người Hãy Quên Em Đi"
-                    },
-                    {
-                        "song_id": 8,
-                        "title": "Nếu Anh Đi"
-                    }
-                ]
-            }
-        ],
-        "favorite_songs": [
-            {
-                "song_id": 8,
-                "title": "Nếu Anh Đi"
-            }
-        ],
-        "listen_history": [
-            {
-                "song_id": 6,
-                "title": "Người Hãy Quên Em Đi",
-                "listened_at": "2025-10-27T09:55:00"
-            }
+      }
+    ],
+    "favorite_songs": [
+      {
+        "song_id": 1,
+        "title": "Muộn Rồi Mà Sao Còn"
+      },
+      {
+        "song_id": 3,
+        "title": "Nơi Này Có Anh"
+      }
+    ],
+    "listen_history": [
+      {
+        "song_id": 1,
+        "title": "Muộn Rồi Mà Sao Còn",
+        "listened_at": "2025-10-27T09:45:00"
+      },
+      {
+        "song_id": 2,
+        "title": "Chúng Ta Của Hiện Tại",
+        "listened_at": "2025-10-27T09:50:00"
+      }
+    ]
+  },
+  {
+    "user_id": 2,
+    "username": "user2",
+    "email": "user2@gmail.com",
+    "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555297/avatar_6_jocz2m.png",
+    "created_at": "2025-10-27T09:05:00",
+    "playlists": [
+      {
+        "playlist_id": 2,
+        "name": "Rap chill",
+        "created_at": "2025-10-27T10:15:00",
+        "songs": [
+          {
+            "song_id": 6,
+            "title": "Người Hãy Quên Em Đi"
+          },
+          {
+            "song_id": 8,
+            "title": "Nếu Anh Đi"
+          }
         ]
-    },
-    {
-        "_id": "user_3",
-        "user_id": 3,
-        "username": "user3",
-        "email": "user3@gmail.com",
-        "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555296/avatar_8_ykaovo.png",
-        "created_at": "2025-10-27T09:10:00",
-        "playlists": [
-            {
-                "playlist_id": 3,
-                "name": "Tình ca",
-                "created_at": "2025-10-27T10:20:00",
-                "songs": [
-                    {
-                        "song_id": 11,
-                        "title": "Mãi Mãi Bên Nhau"
-                    },
-                    {
-                        "song_id": 12,
-                        "title": "Cause I Love You"
-                    }
-                ]
-            }
-        ],
-        "favorite_songs": [
-            {
-                "song_id": 12,
-                "title": "Cause I Love You"
-            }
-        ],
-        "listen_history": [
-            {
-                "song_id": 11,
-                "title": "Mãi Mãi Bên Nhau",
-                "listened_at": "2025-10-27T10:00:00"
-            }
+      }
+    ],
+    "favorite_songs": [
+      {
+        "song_id": 8,
+        "title": "Nếu Anh Đi"
+      }
+    ],
+    "listen_history": [
+      {
+        "song_id": 6,
+        "title": "Người Hãy Quên Em Đi",
+        "listened_at": "2025-10-27T09:55:00"
+      }
+    ]
+  },
+  {
+    "user_id": 3,
+    "username": "user3",
+    "email": "user3@gmail.com",
+    "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555296/avatar_8_ykaovo.png",
+    "created_at": "2025-10-27T09:10:00",
+    "playlists": [
+      {
+        "playlist_id": 3,
+        "name": "Tình ca",
+        "created_at": "2025-10-27T10:20:00",
+        "songs": [
+          {
+            "song_id": 11,
+            "title": "Mãi Mãi Bên Nhau"
+          },
+          {
+            "song_id": 12,
+            "title": "Cause I Love You"
+          }
         ]
-    },
-    {
-        "_id": "user_4",
-        "user_id": 4,
-        "username": "user4",
-        "email": "user4@gmail.com",
-        "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555296/avatar_7_l1xhjf.png",
-        "created_at": "2025-10-27T09:15:00",
-        "playlists": [],
-        "favorite_songs": [],
-        "listen_history": [
-            {
-                "song_id": 14,
-                "title": "Bùa Yêu",
-                "listened_at": "2025-10-27T10:05:00"
-            }
-        ]
-    },
-    {
-        "_id": "user_5",
-        "user_id": 5,
-        "username": "user5",
-        "email": "user5@gmail.com",
-        "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555296/avatar_4_dl9poh.png",
-        "created_at": "2025-10-27T09:20:00",
-        "playlists": [],
-        "favorite_songs": [],
-        "listen_history": []
-    },
-    {
-        "_id": "user_6",
-        "user_id": 6,
-        "username": "user6",
-        "email": "user6@gmail.com",
-        "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555295/avatar_3_hfxflm.png",
-        "created_at": "2025-10-27T09:25:00",
-        "playlists": [],
-        "favorite_songs": [],
-        "listen_history": []
-    },
-    {
-        "_id": "user_7",
-        "user_id": 7,
-        "username": "user7",
-        "email": "user7@gmail.com",
-        "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555295/avatar_3_hfxflm.png",
-        "created_at": "2025-10-27T09:30:00",
-        "playlists": [],
-        "favorite_songs": [],
-        "listen_history": []
-    },
-    {
-        "_id": "user_8",
-        "user_id": 8,
-        "username": "user8",
-        "email": "user8@gmail.com",
-        "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555294/avatar_2_wztt4m.png",
-        "created_at": "2025-10-27T09:35:00",
-        "playlists": [],
-        "favorite_songs": [],
-        "listen_history": []
-    },
-    {
-        "_id": "user_9",
-        "user_id": 9,
-        "username": "user9",
-        "email": "user9@gmail.com",
-        "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555294/avatar_1_tdr58f.png",
-        "created_at": "2025-10-27T09:40:00",
-        "playlists": [],
-        "favorite_songs": [],
-        "listen_history": []
-    },
-    {
-        "_id": "user_10",
-        "user_id": 10,
-        "username": "user10",
-        "email": "user10@gmail.com",
-        "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555294/avatar_10_bzhxxl.png",
-        "created_at": "2025-10-27T09:45:00",
-        "playlists": [],
-        "favorite_songs": [],
-        "listen_history": []
-    }
+      }
+    ],
+    "favorite_songs": [
+      {
+        "song_id": 12,
+        "title": "Cause I Love You"
+      }
+    ],
+    "listen_history": [
+      {
+        "song_id": 11,
+        "title": "Mãi Mãi Bên Nhau",
+        "listened_at": "2025-10-27T10:00:00"
+      }
+    ]
+  },
+  {
+    "user_id": 4,
+    "username": "user4",
+    "email": "user4@gmail.com",
+    "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555296/avatar_7_l1xhjf.png",
+    "created_at": "2025-10-27T09:15:00",
+    "playlists": [],
+    "favorite_songs": [],
+    "listen_history": [
+      {
+        "song_id": 14,
+        "title": "Bùa Yêu",
+        "listened_at": "2025-10-27T10:05:00"
+      }
+    ]
+  },
+  {
+    "user_id": 5,
+    "username": "user5",
+    "email": "user5@gmail.com",
+    "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555296/avatar_4_dl9poh.png",
+    "created_at": "2025-10-27T09:20:00",
+    "playlists": [],
+    "favorite_songs": [],
+    "listen_history": []
+  },
+  {
+    "user_id": 6,
+    "username": "user6",
+    "email": "user6@gmail.com",
+    "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555295/avatar_3_hfxflm.png",
+    "created_at": "2025-10-27T09:25:00",
+    "playlists": [],
+    "favorite_songs": [],
+    "listen_history": []
+  },
+  {
+    "user_id": 7,
+    "username": "user7",
+    "email": "user7@gmail.com",
+    "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555295/avatar_3_hfxflm.png",
+    "created_at": "2025-10-27T09:30:00",
+    "playlists": [],
+    "favorite_songs": [],
+    "listen_history": []
+  },
+  {
+    "user_id": 8,
+    "username": "user8",
+    "email": "user8@gmail.com",
+    "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555294/avatar_2_wztt4m.png",
+    "created_at": "2025-10-27T09:35:00",
+    "playlists": [],
+    "favorite_songs": [],
+    "listen_history": []
+  },
+  {
+    "user_id": 9,
+    "username": "user9",
+    "email": "user9@gmail.com",
+    "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555294/avatar_1_tdr58f.png",
+    "created_at": "2025-10-27T09:40:00",
+    "playlists": [],
+    "favorite_songs": [],
+    "listen_history": []
+  },
+  {
+    "user_id": 10,
+    "username": "user10",
+    "email": "user10@gmail.com",
+    "avatar_url": "https://res.cloudinary.com/dwneyzclv/image/upload/v1761555294/avatar_10_bzhxxl.png",
+    "created_at": "2025-10-27T09:45:00",
+    "playlists": [],
+    "favorite_songs": [],
+    "listen_history": []
+  }
 ]

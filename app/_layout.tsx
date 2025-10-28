@@ -15,7 +15,6 @@ export default function RootLayout() {
         Expo Router sẽ tự động thêm các màn hình trong /app
         <Stack.Screen name="index" />
         <Stack.Screen name="home/home-screen" />
-        <Stack.Screen name="search/SearchScreen" />
         <Stack.Screen name="(onboarding)" />
         <Stack.Screen name="(auths)" />
         <Stack.Screen name="songs/SongScreen" />

@@ -1,6 +1,8 @@
 import { COLORS } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, Text, View } from "react-native";
+import { router } from "expo-router";
+import React, { useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const styles = StyleSheet.create({
   headerContainer: {
@@ -16,11 +18,24 @@ const styles = StyleSheet.create({
   },
 });
 
-const AppHeader: React.FC = () => (
-  <View style={styles.headerContainer}>
-    <Text style={styles.headerTitle}>Geez</Text>
-    <Ionicons name="search-outline" size={26} color={COLORS.primaryText} />
-  </View>
-);
+const AppHeader: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchPress = () => {
+    router.push({
+      pathname: "/(modals)/search",
+      params: { initialQuery: searchQuery }
+    });
+  };
+
+  return (
+    <View style={styles.headerContainer}>
+      <Text style={styles.headerTitle}>Geez</Text>
+      <TouchableOpacity onPress={handleSearchPress}>
+        <Ionicons name="search-outline" size={26} color={COLORS.primaryText} />
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 export default AppHeader;
