@@ -41,7 +41,7 @@ const AppHeader: React.FC = () => {
 
   return (
     <View style={styles.headerContainer}>
-      <Text style={styles.headerTitle}>Geez</Text>
+      <Text style={styles.headerTitle}>SPTunes</Text>
       <TouchableOpacity 
         style={styles.iconButton}
         onPress={handleSearchPress}

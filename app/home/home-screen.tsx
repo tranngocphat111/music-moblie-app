@@ -7,10 +7,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS } from "@/constants/Colors";
 
 import AppHeader from "@/components/home/AppHeader";
-import GeezWeekly from "@/components/home/GeezWeekly";
 import NewAlbums from "@/components/home/NewAlbums";
 import NowPlayingBar from "@/components/home/NowPlayingBar";
 import RecentlyMusic from "@/components/home/RecentlyMusic";
+import SPTunesWeekly from "@/components/home/SPTunesWeekly";
 import TabBar from "@/components/home/TabBar";
 
 const styles = StyleSheet.create({
@@ -64,7 +64,7 @@ const HomeScreen: React.FC = () => {
         >
           <AppHeader />
           <NewAlbums />
-          <GeezWeekly />
+          <SPTunesWeekly />
           <RecentlyMusic />
         </ScrollView>
 

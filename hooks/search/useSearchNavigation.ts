@@ -1,7 +1,7 @@
-import { useCallback } from "react";
-import { router } from "expo-router";
 import { SearchResult } from "@/types/search";
 import { navigateToResult } from "@/utils/searchUtils";
+import { router } from "expo-router";
+import { useCallback } from "react";
 
 /**
  * Custom hook to handle search navigation
@@ -12,7 +12,7 @@ export const useSearchNavigation = () => {
   }, []);
 
   const handleCancel = useCallback(() => {
-    router.back();
+    router.push("/home/home-screen");
   }, []);
 
   return {

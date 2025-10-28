@@ -1,10 +1,10 @@
 import React from "react";
 import {
-  View,
-  Text,
-  ImageBackground,
-  StyleSheet,
-  Dimensions,
+    Dimensions,
+    ImageBackground,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 import { Slide } from "../../constants/slides";
 
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   titleLarge: {
-    fontSize: 70, // Style cho chữ "GEEZ"
+    fontSize: 70, // Style cho chữ "SPTUNES"
     fontWeight: "900",
   },
   subtitle: {

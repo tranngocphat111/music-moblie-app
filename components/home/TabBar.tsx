@@ -13,13 +13,13 @@ interface TabItemProps {
 }
 
 const TabItem = ({ icon, label, route, isActive, isHome }: TabItemProps) => {
-  const pathname = usePathname();
-  
   const handlePress = () => {
-    // Chỉ navigate nếu chưa ở trang đó
-    if (!pathname.includes(route.split('/').pop() || '')) {
-      router.push(route as any);
-    }
+    // Không làm gì nếu đã ở trang hiện tại
+    if (isActive && !isHome) return;
+    if (isHome && route.includes('home')) return;
+    
+    // Dùng replace để không có animation slide
+    router.replace(route as any);
   };
 
   return (
@@ -77,7 +77,7 @@ const TabBar: React.FC = () => {
   const pathname = usePathname();
 
   // Determine active tab based on current route
-  const isHomeActive = true; // Home luôn màu xanh
+  const isHomeActive = pathname.includes('/home');
   const isSearchActive = pathname.includes('/search');
   const isSongsActive = pathname.includes('/songs');
   const isAccountActive = pathname.includes('/account');
@@ -94,7 +94,7 @@ const TabBar: React.FC = () => {
         label="Home"
         route="/home/home-screen"
         isActive={isHomeActive}
-        isHome={true}
+        isHome={isHomeActive}
       />
       <TabItem
         icon="search"

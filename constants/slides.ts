@@ -13,7 +13,7 @@ export const slides: Slide[] = [
   {
     key: "1",
     image: require("../assets/images/onboarding/onboarding_1.jpg"),
-    title: "GEEZ MUSIC",
+    title: "SPTUNES MUSIC",
     preTitle: null,
     subtitle: "Discover and stream your favorite songs anytime, anywhere",
     titleStyle: "large",
@@ -22,7 +22,7 @@ export const slides: Slide[] = [
     key: "2",
     image: require("../assets/images/onboarding/onboarding_2.png"),
     preTitle: "APP UI KIT",
-    title: "WELCOME TO GEEZ APP",
+    title: "WELCOME TO SPTUNES APP",
     subtitle: "Organize your playlists and enjoy seamless music experience",
     titleStyle: "normal",
   },

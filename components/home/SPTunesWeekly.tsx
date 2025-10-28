@@ -2,12 +2,12 @@ import { COLORS } from "@/constants/Colors";
 import { Album } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import {
-    FlatList,
-    ImageBackground,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  FlatList,
+  ImageBackground,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import SectionHeader from "./SectionHeader";
 
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const geezWeeklyData: Album[] = [
+const sptunesWeeklyData: Album[] = [
     {
       id: "w1",
       title: "Pray For You",
@@ -93,11 +93,11 @@ const geezWeeklyData: Album[] = [
     },
   ];
 
-const GeezWeekly: React.FC = () => (
+const SPTunesWeekly: React.FC = () => (
   <View style={styles.sectionContainer}>
-    <SectionHeader title="Geez Weekly" />
+    <SectionHeader title="SPTunes Weekly" />
     <FlatList
-      data={geezWeeklyData}
+      data={sptunesWeeklyData}
       horizontal
       showsHorizontalScrollIndicator={false}
       keyExtractor={(item) => item.id}
@@ -128,4 +128,4 @@ const GeezWeekly: React.FC = () => (
   </View>
 );
 
-export default GeezWeekly;
+export default SPTunesWeekly;
