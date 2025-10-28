@@ -66,6 +66,11 @@ export function PlayerModal({
   useEffect(() => {
     rotateAnim.setValue(0);
     lyricPositions.length = 0; // Reset lyric positions when song changes
+
+    // Scroll lyrics back to top when song changes
+    if (lyricScrollViewRef.current) {
+      lyricScrollViewRef.current.scrollTo({ y: 0, animated: false });
+    }
   }, [selectedSong?.song_id]);
 
   // Rotate the album cover when playing
