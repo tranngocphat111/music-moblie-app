@@ -1,12 +1,12 @@
 import { SearchHeaderProps } from '@/types/search';
 import React from 'react';
 import {
-    Keyboard,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Keyboard,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
 
 
@@ -17,7 +17,16 @@ const SearchHeader = ({
   setIsFocused,
   onCancel,
   showCancelButton = false,
+  onSubmitEditing,
+  onBlur,
 }: SearchHeaderProps) => {
+  const handleBlur = () => {
+    setIsFocused(false);
+    if (onBlur) {
+      onBlur();
+    }
+  };
+
   return (
     <View style={styles.header}>
       <View style={styles.searchContainer}>
@@ -29,7 +38,9 @@ const SearchHeader = ({
           value={searchQuery}
           onChangeText={setSearchQuery}
           onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onBlur={handleBlur}
+          onSubmitEditing={onSubmitEditing}
+          returnKeyType="search"
         />
         {searchQuery.length > 0 && (
           <TouchableOpacity onPress={() => setSearchQuery("")}>

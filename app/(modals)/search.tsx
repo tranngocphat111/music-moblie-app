@@ -1,174 +1,99 @@
+import { useLocalSearchParams } from "expo-router";
+import React, { useCallback, useState } from "react";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import SearchHeader from "@/components/search/SearchHeader";
 import SearchHistory from "@/components/search/SearchHistory";
 import SearchResults from "@/components/search/SearchResults";
 import SearchTabs from "@/components/search/SearchTabs";
-import { SearchResult, TabType } from "@/types/search";
-import { router, useLocalSearchParams, useNavigation } from "expo-router";
-import React, { useState } from "react";
-import {
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { DEFAULT_TOP_SEARCHING } from "@/constants/Search";
+import { useSearchFilter, useSearchHistory, useSearchNavigation } from "@/hooks/search";
+import { useFetchAlbums } from "@/hooks/useFetchAlbums";
+import { useFetchArtists } from "@/hooks/useFetchArtists";
+import { useFetchSongs } from "@/hooks/useFetchSongs";
+import { TabType } from "@/types/search";
 
 export default function SearchModal() {
-  const navigation = useNavigation();
+  // URL params
   const { initialQuery } = useLocalSearchParams<{ initialQuery: string }>();
+  
+  // Local state
   const [searchQuery, setSearchQuery] = useState(initialQuery || "");
   const [activeTab, setActiveTab] = useState<TabType>("all");
   const [isFocused, setIsFocused] = useState(true);
+  const [topSearching] = useState<string[]>(DEFAULT_TOP_SEARCHING);
 
-  const handleCancel = () => {
-    router.back();
-  };
+  // Custom hooks
+  const { songs, isLoading: loadingSongs } = useFetchSongs();
+  const { artists, loading: loadingArtists } = useFetchArtists();
+  const { albums, isLoading: loadingAlbums } = useFetchAlbums();
+  
+  const { searchHistory, saveToHistory, setSearchHistory } = useSearchHistory();
+  const { getFilteredResults } = useSearchFilter(searchQuery, activeTab, songs, artists, albums);
+  const { handleNavigation, handleCancel } = useSearchNavigation();
 
-  // Sample data
-  const searchHistory: string[] = ["Fall out boy", "Good girl"];
-  const topSearching: string[] = ["Girl generation", "Imagine Dragon"];
+  // Event handlers
+  const handleSearchChange = useCallback((query: string) => {
+    setSearchQuery(query);
+    // Không lưu history ở đây nữa, chỉ update state
+  }, []);
 
-  const allResults: SearchResult[] = [
-    {
-      id: "1",
-      title: "Just For What",
-      artist: "Avinci John",
-      image: "https://via.placeholder.com/60/FF69B4/FFFFFF?text=AJ",
-      type: "song",
-    },
-    {
-      id: "2",
-      title: "Johnny Scott",
-      artist: "Artist",
-      image: "https://via.placeholder.com/60/4CAF50/FFFFFF?text=JS",
-      type: "artist",
-    },
-    {
-      id: "3",
-      title: "Justin Scarrent",
-      artist: "Artist",
-      image: "https://via.placeholder.com/60/2196F3/FFFFFF?text=JS",
-      type: "artist",
-    },
-  ];
-
-  const albumResults: SearchResult[] = [
-    {
-      id: "1",
-      title: "Run Run Run",
-      artist: "Avinci John",
-      image: "https://via.placeholder.com/60/FF69B4/FFFFFF?text=RRR",
-      type: "album",
-    },
-    {
-      id: "2",
-      title: "Rulia and Remé",
-      artist: "Jeeny Benmy",
-      image: "https://via.placeholder.com/60/FF5722/FFFFFF?text=RR",
-      type: "album",
-    },
-    {
-      id: "3",
-      title: "Roomate 01",
-      artist: "Chain Smoker",
-      image: "https://via.placeholder.com/60/4CAF50/FFFFFF?text=R01",
-      type: "album",
-    },
-  ];
-
-  const artistResults: SearchResult[] = [
-    {
-      id: "1",
-      title: "Johnny Scott",
-      artist: "Artist",
-      image: "https://via.placeholder.com/60/2196F3/FFFFFF?text=JS",
-      type: "artist",
-    },
-    {
-      id: "2",
-      title: "Justin Scarrent",
-      artist: "Artist",
-      image: "https://via.placeholder.com/60/4CAF50/FFFFFF?text=JS",
-      type: "artist",
-    },
-  ];
-
-  const mvResults: SearchResult[] = [
-    {
-      id: "1",
-      title: "Run Run Run",
-      artist: "Avinci John",
-      image: "https://via.placeholder.com/60/FF69B4/FFFFFF?text=RRR",
-      type: "mv",
-    },
-    {
-      id: "2",
-      title: "Rulia and Remé",
-      artist: "Jeeny Benmy",
-      image: "https://via.placeholder.com/60/FF5722/FFFFFF?text=RR",
-      type: "mv",
-    },
-  ];
-
-  const songResults: SearchResult[] = [
-    {
-      id: "1",
-      title: "Just For What",
-      artist: "Avinci John",
-      image: "https://via.placeholder.com/60/FF69B4/FFFFFF?text=JFW",
-      type: "song",
-    },
-    {
-      id: "2",
-      title: "July and Remé",
-      artist: "Jeeny Benmy",
-      image: "https://via.placeholder.com/60/4CAF50/FFFFFF?text=JR",
-      type: "song",
-    },
-  ];
-
-  const getResultsForTab = () => {
-    switch (activeTab) {
-      case "album":
-        return albumResults;
-      case "artist":
-        return artistResults;
-      case "song":
-        return songResults;
-      case "playlist":
-        return allResults; // TODO: Add playlist results when available
-      default:
-        return allResults;
+  const handleSearchSubmit = useCallback(() => {
+    // Chỉ lưu vào history khi submit (nhấn Enter hoặc blur)
+    if (searchQuery.trim()) {
+      saveToHistory(searchQuery.trim());
     }
-  };
+  }, [searchQuery, saveToHistory]);
+
+  const handleHistoryItemPress = useCallback((query: string) => {
+    setSearchQuery(query);
+    // Không cần lưu lại vào history vì đã có sẵn
+  }, []);
+
+  // Computed values
+  const isLoading = loadingSongs || loadingArtists || loadingAlbums;
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
-
-      <SearchHeader
+      <SearchHeader 
         searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
+        setSearchQuery={handleSearchChange}
+        onCancel={handleCancel}
         isFocused={isFocused}
         setIsFocused={setIsFocused}
-        onCancel={handleCancel}
-        showCancelButton={true}
+        showCancelButton={isFocused}
+        onSubmitEditing={handleSearchSubmit}
+        onBlur={handleSearchSubmit}
       />
-
-      {searchQuery.length > 0 && (
-        <SearchTabs
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-        />
-      )}
-
+      <SearchTabs 
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+      />
       <ScrollView style={styles.content}>
-        {searchQuery.length === 0 ? (
-          <SearchHistory
-            searchHistory={searchHistory}
-            topSearching={topSearching}
+        {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#1DB954" />
+          </View>
+        ) : searchQuery ? (
+          <SearchResults 
+            results={getFilteredResults()} 
+            onPress={handleNavigation}
           />
         ) : (
-          <SearchResults results={getResultsForTab()} />
+          <SearchHistory 
+            searchHistory={searchHistory}
+            topSearching={topSearching} 
+            onHistoryPress={handleHistoryItemPress}
+            onClearHistory={() => setSearchHistory([])}
+          />
         )}
       </ScrollView>
     </SafeAreaView>
@@ -178,9 +103,15 @@ export default function SearchModal() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0a0e27",
+    backgroundColor: '#000',
   },
   content: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 50,
   },
 });

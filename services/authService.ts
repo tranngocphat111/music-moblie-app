@@ -1,0 +1,81 @@
+import { API_URL } from "@/constants/Api";
+import * as SecureStore from "expo-secure-store"; // Dù không dùng trực tiếp trong hàm, giữ lại cho ngữ cảnh
+
+export interface User {
+  _id: string;
+  username: string;
+  email: string;
+  // Bạn có thể thêm các trường khác như avatar, role, v.v.
+}
+
+export interface AuthResponse {
+  token: string;
+  user: User;
+}
+
+/**
+ * Đăng nhập người dùng bằng email và mật khẩu.
+ */
+export const loginUser = async (
+  email: string,
+  password: string
+): Promise<AuthResponse> => {
+  const response = await fetch(`${API_URL}/users/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Đăng nhập thất bại");
+  }
+
+  return response.json();
+};
+
+/**
+ * Đăng ký người dùng mới.
+ */
+export const registerUser = async (data: any): Promise<AuthResponse> => {
+  const response = await fetch(`${API_URL}/users/sign-up`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Đăng ký thất bại");
+  }
+
+  return response.json();
+};
+
+/**
+ * Lấy thông tin người dùng dựa trên token đã lưu trữ (để xác thực lại).
+ * Gửi token qua Authorization Header.
+ */
+export const fetchUserByToken = async (token: string): Promise<User> => {
+  const response = await fetch(`${API_URL}/users/me`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`, // Quan trọng: Gửi token dưới dạng Bearer
+    },
+  });
+
+  if (!response.ok) {
+    // Nếu token hết hạn (401 Unauthorized), AuthContext sẽ catch lỗi này
+    // và xóa token, đảm bảo người dùng được đăng xuất an toàn.
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Xác thực phiên làm việc thất bại");
+  }
+
+  // Giả định API trả về trực tiếp đối tượng User
+  return response.json();
+};

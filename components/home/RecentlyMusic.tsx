@@ -3,12 +3,12 @@ import { useAudio } from "@/contexts/AudioContext";
 import { useFetchSongs } from "@/hooks/useFetchSongs";
 import { Feather } from "@expo/vector-icons";
 import {
-  ActivityIndicator,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Image,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import SectionHeader from "./SectionHeader";
 

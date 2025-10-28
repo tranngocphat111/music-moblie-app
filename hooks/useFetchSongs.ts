@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { API_URL } from "../constants/Api";
 
 
-
 export const useFetchSongs = () => {
   const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -14,7 +13,7 @@ export const useFetchSongs = () => {
       try {
         setIsLoading(true);
         setError(null);
-        const response = await fetch(`${API_URL}/api/songs`);
+        const response = await fetch(`${API_URL}/songs`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
