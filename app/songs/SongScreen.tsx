@@ -2,23 +2,23 @@
 
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
-import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from "expo-av";
-import React, { useEffect, useRef, useState, useMemo } from "react";
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Dimensions,
   FlatList,
   Image,
+  ImageBackground,
   Modal,
   SafeAreaView,
+  ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  StatusBar,
-  ScrollView,
-  ImageBackground,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DATA } from "../../data/data";
 
 export type LyricLine = {
@@ -42,7 +42,7 @@ const formatTime = (millis: number) => {
   return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 };
 
-export default function Index() {
+export default function SongScreen() {
   const insets = useSafeAreaInsets();
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
@@ -60,10 +60,11 @@ export default function Index() {
   const lyricCenterOffset = useMemo(() => {
     const spaceAboveScrollView =
       ESTIMATED_HEADER_HEIGHT + ESTIMATED_LYRICS_TITLE_HEIGHT;
-    
+
     // Chiều cao khả dụng cho phần lyrics (trừ đi header và controls)
-    const availableHeight = height - ESTIMATED_CONTROLS_HEIGHT - spaceAboveScrollView;
-    
+    const availableHeight =
+      height - ESTIMATED_CONTROLS_HEIGHT - spaceAboveScrollView;
+
     // Tính center offset dựa trên chiều cao khả dụng
     return Math.max(availableHeight * 0.4, ESTIMATED_LYRIC_LINE_HEIGHT * 3);
   }, [height]);
@@ -139,14 +140,17 @@ export default function Index() {
               // Tính toán vị trí scroll để căn giữa lyric đang active
               const lineHeight = ESTIMATED_LYRIC_LINE_HEIGHT;
               const currentLinePosition = newIndex * lineHeight;
-              
+
               // Tính chiều cao khả dụng cho lyrics (trừ đi header, controls và lyrics title)
-              const availableHeight = height - ESTIMATED_HEADER_HEIGHT - 
-                ESTIMATED_CONTROLS_HEIGHT - ESTIMATED_LYRICS_TITLE_HEIGHT;
-              
+              const availableHeight =
+                height -
+                ESTIMATED_HEADER_HEIGHT -
+                ESTIMATED_CONTROLS_HEIGHT -
+                ESTIMATED_LYRICS_TITLE_HEIGHT;
+
               // Tính vị trí center mục tiêu
               const targetCenter = availableHeight / 2;
-              
+
               // Tính offset để dòng hiện tại nằm giữa khu vực hiển thị
               const offset = Math.max(
                 0,
@@ -285,7 +289,8 @@ export default function Index() {
                 paddingTop: lyricCenterOffset,
                 // Padding dưới để đảm bảo dòng cuối cùng có thể cuộn lên giữa
                 paddingBottom: lyricCenterOffset,
-                minHeight: height - ESTIMATED_HEADER_HEIGHT - ESTIMATED_CONTROLS_HEIGHT,
+                minHeight:
+                  height - ESTIMATED_HEADER_HEIGHT - ESTIMATED_CONTROLS_HEIGHT,
               },
             ]}
             showsVerticalScrollIndicator={false}
@@ -344,13 +349,12 @@ export default function Index() {
       {/* --- MODAL PLAYER --- */}
       {selectedSong && (
         <Modal animationType="slide" visible={true} onRequestClose={closeModal}>
-          <SafeAreaView style={[styles.modalContainer, { paddingTop: insets.top }]}>
+          <SafeAreaView
+            style={[styles.modalContainer, { paddingTop: insets.top }]}
+          >
             {/* Header */}
             <View style={[styles.headerContainer, { marginBottom: 10 }]}>
-              <TouchableOpacity 
-                onPress={closeModal}
-                style={{ padding: 8 }}
-              >
+              <TouchableOpacity onPress={closeModal} style={{ padding: 8 }}>
                 <Ionicons name="arrow-back" size={24} color="white" />
               </TouchableOpacity>
               {/* Pagination (2 chấm) */}
@@ -390,7 +394,12 @@ export default function Index() {
             />
 
             {/* Thanh điều khiển (cố định ở dưới) */}
-            <View style={[styles.controlsWrapper, { paddingBottom: Math.max(insets.bottom + 10, 20) }]}>
+            <View
+              style={[
+                styles.controlsWrapper,
+                { paddingBottom: Math.max(insets.bottom + 10, 20) },
+              ]}
+            >
               <View style={styles.sliderContainer}>
                 <Text style={styles.timeText}>
                   {formatTime(positionMillis)}
@@ -590,7 +599,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexGrow: 1,
     // THAY ĐỔI: Đảm bảo container có đủ không gian để căn giữa
-    minHeight: height - ESTIMATED_HEADER_HEIGHT - ESTIMATED_CONTROLS_HEIGHT - ESTIMATED_LYRICS_TITLE_HEIGHT,
+    minHeight:
+      height -
+      ESTIMATED_HEADER_HEIGHT -
+      ESTIMATED_CONTROLS_HEIGHT -
+      ESTIMATED_LYRICS_TITLE_HEIGHT,
   },
   lyricLine: {
     fontSize: 18,
