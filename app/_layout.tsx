@@ -8,8 +8,8 @@ export default function RootLayout() {
       <StatusBar style="light" />
       <Stack
         screenOptions={{
-          headerShown: false, // ẩn header mặc định
-          contentStyle: { backgroundColor: "#0a0e27" }, // màu nền mặc định
+          headerShown: false,
+          contentStyle: { backgroundColor: "#0a0e27" },
         }}
       >
         Expo Router sẽ tự động thêm các màn hình trong /app
@@ -18,6 +18,7 @@ export default function RootLayout() {
         <Stack.Screen name="(onboarding)" />
         <Stack.Screen name="(auths)" />
         <Stack.Screen name="songs/SongScreen" />
+        <Stack.Screen name="(account)" />
       </Stack>
     </>
   );
