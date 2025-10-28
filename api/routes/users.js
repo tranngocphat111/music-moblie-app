@@ -24,12 +24,11 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/sign-up", async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
     const user = new User({
-      user_id: req.body.user_id,
       username: req.body.username,
       email: req.body.email,
       password: hashedPassword,
