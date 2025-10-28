@@ -25,7 +25,6 @@ const UserSchema = new Schema(
   {
     user_id: {
       type: String,
-      required: true,
       unique: true,
       default: uuidv4,
     },
