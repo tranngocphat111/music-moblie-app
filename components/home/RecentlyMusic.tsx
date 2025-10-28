@@ -1,58 +1,64 @@
 import { COLORS } from "@/constants/Colors";
-import { RecentlyMusicProps } from "@/types";
+import { useFetchSongs } from "@/hooks/useFetchSongs";
 import { Feather } from "@expo/vector-icons";
-import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import SectionHeader from "./SectionHeader";
 
 const styles = StyleSheet.create({
-    sectionContainer: {
-        marginBottom: 10,
-      },
-      errorText: {
-        color: COLORS.error,
-        textAlign: "center",
-        fontSize: 16,
-        marginVertical: 20,
-      },
-    songItem: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginBottom: 16,
-    },
-    songIndex: {
-      fontSize: 16,
-      color: COLORS.secondaryText,
-      width: 30,
-    },
-    songImage: {
-      width: 40,
-      height: 40,
-      borderRadius: 8,
-      marginRight: 12,
-    },
-    songTextContainer: {
-      flex: 1,
-      marginRight: 12,
-    },
-    songTitle: {
-      fontSize: 16,
-      color: COLORS.primaryText,
-      fontWeight: "500",
-    },
-    songArtist: {
-      fontSize: 14,
-      color: COLORS.secondaryText,
-    },
-  });
-  
-  const RecentlyMusic: React.FC<RecentlyMusicProps> = ({
-    songs,
-    isLoading,
-    error,
-  }) => (
+  sectionContainer: {
+    marginBottom: 10,
+  },
+  errorText: {
+    color: COLORS.error,
+    textAlign: "center",
+    fontSize: 16,
+    marginVertical: 20,
+  },
+  songItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  songIndex: {
+    fontSize: 16,
+    color: COLORS.secondaryText,
+    width: 30,
+  },
+  songImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    marginRight: 12,
+  },
+  songTextContainer: {
+    flex: 1,
+    marginRight: 12,
+  },
+  songTitle: {
+    fontSize: 16,
+    color: COLORS.primaryText,
+    fontWeight: "500",
+  },
+  songArtist: {
+    fontSize: 14,
+    color: COLORS.secondaryText,
+  },
+});
+
+const RecentlyMusic: React.FC = () => {
+  const { songs, isLoading, error } = useFetchSongs();
+
+  return (
     <View style={styles.sectionContainer}>
       <SectionHeader title="Recently Music" />
-  
+
       {isLoading && (
         <ActivityIndicator
           size="large"
@@ -60,20 +66,17 @@ const styles = StyleSheet.create({
           style={{ marginVertical: 20 }}
         />
       )}
-  
+
       {error && (
         <Text style={styles.errorText}>Error loading music: {error}</Text>
       )}
-  
+
       {!isLoading &&
         !error &&
         songs.map((item, index) => (
           <TouchableOpacity key={item._id} style={styles.songItem}>
             <Text style={styles.songIndex}>{`0${index + 1}`}</Text>
-            <Image
-              source={{ uri: item.image_url }}
-              style={styles.songImage}
-            />
+            <Image source={{ uri: item.image_url }} style={styles.songImage} />
             <View style={styles.songTextContainer}>
               <Text style={styles.songTitle} numberOfLines={1}>
                 {item.title}
@@ -91,5 +94,6 @@ const styles = StyleSheet.create({
         ))}
     </View>
   );
+};
 
-    export default RecentlyMusic;
+export default RecentlyMusic;

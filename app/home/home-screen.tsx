@@ -7,13 +7,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { COLORS } from "@/constants/Colors";
 
-import AppHeader from "@/components/AppHeader";
-import GeezWeekly from "@/components/GeezWeekly";
-import NewAlbums from "@/components/NewAlbums";
-import NowPlayingBar from "@/components/NowPlayingBar";
-import RecentlyMusic from "@/components/RecentlyMusic";
-import TabBar from "@/components/TabBar";
-import { useFetchSongs } from "@/hooks/useFetchSongs";
+import AppHeader from "@/components/home/AppHeader";
+import GeezWeekly from "@/components/home/GeezWeekly";
+import NewAlbums from "@/components/home/NewAlbums";
+import NowPlayingBar from "@/components/home/NowPlayingBar";
+import RecentlyMusic from "@/components/home/RecentlyMusic";
+import TabBar from "@/components/home/TabBar";
 
 const styles = StyleSheet.create({
   sectionContainer: {
@@ -45,9 +44,7 @@ const styles = StyleSheet.create({
 });
 
 const HomeScreen: React.FC = () => {
-  // Logic gọi API đã được chuyển vào hook `useFetchSongs`
-  const { songs, isLoading, error } = useFetchSongs();
-
+  
   return (
     <SafeAreaView style={styles.safeArea}>
       <Stack.Screen options={{ headerShown: false }} />
@@ -60,7 +57,7 @@ const HomeScreen: React.FC = () => {
         <AppHeader />
         <NewAlbums />
         <GeezWeekly />
-        <RecentlyMusic songs={songs} isLoading={isLoading} error={error} />
+        <RecentlyMusic />
       </ScrollView>
 
       <NowPlayingBar />
