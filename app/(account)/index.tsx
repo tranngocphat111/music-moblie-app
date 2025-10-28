@@ -6,8 +6,8 @@ import AccountHeader from "@/components/account/AccountHeader";
 import ProfileInfo from "@/components/account/ProfileInfo";
 import LibrarySection from "@/components/account/LibrarySection";
 import RecentActivity from "@/components/account/RecentActivity";
-import NowPlayingBar from "@/components/NowPlayingBar";
-import TabBar from "@/components/TabBar";
+import NowPlayingBar from "@/components/home/NowPlayingBar";
+import TabBar from "@/components/home/TabBar";
 
 export default function AccountScreen() {
   return (
