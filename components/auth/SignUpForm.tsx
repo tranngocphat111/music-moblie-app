@@ -5,17 +5,16 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert, // <--- THÊM: Để hiển thị cảnh báo
-  ActivityIndicator, // <--- THÊM: Để hiển thị trạng thái tải
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useAuth } from "../../contexts/AuthContext"; // <--- THÊM: Import hook useAuth
+import { useAuth } from "../../contexts/AuthContext"; 
 
 export default function SignUpForm() {
   const router = useRouter();
-  // Lấy các hàm và trạng thái cần thiết từ AuthContext
-  const { signUp, isLoading, error, clearError } = useAuth(); // <--- THÊM
+  const { signUp, isLoading, error, clearError } = useAuth();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -23,8 +22,6 @@ export default function SignUpForm() {
   const [secureText, setSecureText] = useState(true);
 
   const handleSignUp = async () => {
-    // <--- THÊM: Thêm async
-    // 1. Kiểm tra đầu vào cơ bản
     if (!name || !email || !password) {
       Alert.alert("Lỗi", "Vui lòng điền đầy đủ Tên, Email và Mật khẩu.");
       return;
@@ -34,9 +31,7 @@ export default function SignUpForm() {
       // 2. Gọi hàm đăng ký từ Context
       await signUp({ username: name, email, password }); // Giả định API/Context dùng 'username'
 
-      // Ghi chú: Nếu đăng ký thành công, AuthContext (như trong RootLayout)
-      // sẽ tự động điều hướng đến '/home/home-screen'
-      // Nếu bạn muốn hiển thị thông báo thành công:
+
       Alert.alert("Thành công", "Đăng ký thành công! Bạn đã được đăng nhập.");
     } catch (err) {
       // 3. Xử lý lỗi

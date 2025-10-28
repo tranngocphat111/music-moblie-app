@@ -1,11 +1,10 @@
 import { API_URL } from "@/constants/Api";
-import * as SecureStore from "expo-secure-store"; // Dù không dùng trực tiếp trong hàm, giữ lại cho ngữ cảnh
+import * as SecureStore from "expo-secure-store";
 
 export interface User {
   _id: string;
   username: string;
   email: string;
-  // Bạn có thể thêm các trường khác như avatar, role, v.v.
 }
 
 export interface AuthResponse {
@@ -13,14 +12,11 @@ export interface AuthResponse {
   user: User;
 }
 
-/**
- * Đăng nhập người dùng bằng email và mật khẩu.
- */
 export const loginUser = async (
   email: string,
   password: string
 ): Promise<AuthResponse> => {
-  const response = await fetch(`${API_URL}/users/login`, {
+  const response = await fetch(`${API_URL}/users/sign-in`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -36,9 +32,6 @@ export const loginUser = async (
   return response.json();
 };
 
-/**
- * Đăng ký người dùng mới.
- */
 export const registerUser = async (data: any): Promise<AuthResponse> => {
   const response = await fetch(`${API_URL}/users/sign-up`, {
     method: "POST",
@@ -56,22 +49,16 @@ export const registerUser = async (data: any): Promise<AuthResponse> => {
   return response.json();
 };
 
-/**
- * Lấy thông tin người dùng dựa trên token đã lưu trữ (để xác thực lại).
- * Gửi token qua Authorization Header.
- */
 export const fetchUserByToken = async (token: string): Promise<User> => {
   const response = await fetch(`${API_URL}/users/me`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`, // Quan trọng: Gửi token dưới dạng Bearer
+      Authorization: `Bearer ${token}`,
     },
   });
 
   if (!response.ok) {
-    // Nếu token hết hạn (401 Unauthorized), AuthContext sẽ catch lỗi này
-    // và xóa token, đảm bảo người dùng được đăng xuất an toàn.
     const errorData = await response.json();
     throw new Error(errorData.message || "Xác thực phiên làm việc thất bại");
   }

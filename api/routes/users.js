@@ -1,10 +1,11 @@
 // routes/users.js
 const express = require("express");
 const router = express.Router();
+require("dotenv").config();
 const User = require("../models/User"); // <-- 1. Import model
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const authenticateToken = require("../middleware/auth");
 const JWT_SECRET = process.env.JWT_SECRET;
 
 router.get("/", async (req, res) => {
@@ -30,6 +31,11 @@ router.get("/:id", async (req, res) => {
 
 router.post("/sign-up", async (req, res) => {
   try {
+    const existingUser = await User.findOne({ email: req.body.email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email đã được sử dụng." });
+    }
+
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
     const user = new User({
@@ -39,9 +45,17 @@ router.post("/sign-up", async (req, res) => {
     });
 
     const newUser = await user.save();
-    res.status(201).json(newUser);
+
+    res.status(201).json({
+      user: {
+        _id: newUser._id,
+        user_id: newUser.user_id,
+        username: newUser.username,
+        email: newUser.email,
+      },
+    });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ message: err.message || "Đăng ký thất bại." });
   }
 });
 
@@ -68,6 +82,16 @@ router.post("/sign-in", async (req, res) => {
       email: user.email,
     },
   });
+});
+
+router.get("/me", authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select("-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 module.exports = router;
