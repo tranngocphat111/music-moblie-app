@@ -5,7 +5,7 @@ require("dotenv").config();
 const User = require("../models/User"); // <-- 1. Import model
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const authenticateToken = require("../middleware/auth");
 const JWT_SECRET = process.env.JWT_SECRET;
 
 router.get("/", async (req, res) => {
@@ -86,10 +86,8 @@ router.post("/sign-in", async (req, res) => {
 
 router.get("/me", authenticateToken, async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select("-password -__v");
-    if (!user) {
-      return res.status(404).json({ message: "Không tìm thấy người dùng." });
-    }
+    const user = await User.findById(req.user._id).select("-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
     res.json(user);
   } catch (err) {
     res.status(500).json({ message: err.message });
