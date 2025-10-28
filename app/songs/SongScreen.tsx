@@ -1,5 +1,6 @@
 // src/screens/Index.tsx
 
+import { useFetchSongs } from "@/hooks/useFetchSongs";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
@@ -19,21 +20,22 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DATA } from "../../data/data";
 
+const { width, height } = Dimensions.get("window");
+
+// Định nghĩa Type cho LyricLine để khắc phục lỗi TypeScript 7006
 export type LyricLine = {
   time: number;
   text: string;
 };
 
-const { width, height } = Dimensions.get("window");
+// Các giá trị ước tính (dựa trên Stylesheet)
+const ESTIMATED_HEADER_HEIGHT = 50;
+const ESTIMATED_CONTROLS_HEIGHT = 120;
+const ESTIMATED_LYRICS_TITLE_HEIGHT = 50;
+const ESTIMATED_LYRIC_LINE_HEIGHT = 40;
 
-const ESTIMATED_HEADER_HEIGHT = 50; // SafeAreaView + padding
-const ESTIMATED_CONTROLS_HEIGHT = 120; // ControlsWrapper
-const ESTIMATED_LYRICS_TITLE_HEIGHT = 70; // "Lyrics" Header + margin
-const ESTIMATED_LYRIC_LINE_HEIGHT = 40; // line height + margin (đã fix)
-
-type Song = (typeof DATA.songs)[0];
+type Song = any;
 
 const formatTime = (millis: number) => {
   const totalSeconds = Math.floor(millis / 1000);
@@ -43,6 +45,8 @@ const formatTime = (millis: number) => {
 };
 
 export default function SongScreen() {
+  const { songs, isLoading, error } = useFetchSongs();
+
   const insets = useSafeAreaInsets();
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
@@ -54,22 +58,21 @@ export default function SongScreen() {
 
   const flatListRef = useRef<FlatList>(null);
   const [activePageIndex, setActivePageIndex] = useState(0);
-  const lyricScrollViewRef = useRef<ScrollView>(null);
+  const lyricScrollViewRef = useRef<ScrollView>(null); // TÍNH TOÁN DYNAMIC CHO PADDING CĂN GIỮA (Trang 2)
 
-  // Tính toán vị trí offset cần thiết để căn giữa Lyric một cách linh hoạt
-  const lyricCenterOffset = useMemo(() => {
-    const spaceAboveScrollView =
-      ESTIMATED_HEADER_HEIGHT + ESTIMATED_LYRICS_TITLE_HEIGHT;
+  const lyricCenterPadding = useMemo(() => {
+    const fixedAreaHeight =
+      insets.top +
+      ESTIMATED_HEADER_HEIGHT +
+      ESTIMATED_LYRICS_TITLE_HEIGHT +
+      ESTIMATED_CONTROLS_HEIGHT;
 
-    // Chiều cao khả dụng cho phần lyrics (trừ đi header và controls)
-    const availableHeight =
-      height - ESTIMATED_CONTROLS_HEIGHT - spaceAboveScrollView;
+    const availableHeight = height - fixedAreaHeight;
+    const padding = availableHeight / 2 - ESTIMATED_LYRIC_LINE_HEIGHT / 2;
 
-    // Tính center offset dựa trên chiều cao khả dụng
-    return Math.max(availableHeight * 0.4, ESTIMATED_LYRIC_LINE_HEIGHT * 3);
-  }, [height]);
+    return Math.max(0, padding);
+  }, [insets.top, height]); // --- AUDIO SETUP & CLEANUP ---
 
-  // ... (useEffect cho Audio Mode giữ nguyên)
   useEffect(() => {
     const setupAudioMode = async () => {
       try {
@@ -93,7 +96,7 @@ export default function SongScreen() {
     return () => {
       sound?.unloadAsync();
     };
-  }, [sound]);
+  }, [sound]); // --- PLAYBACK FUNCTIONS ---
 
   const playSong = async (song: Song) => {
     if (selectedSong?.song_id === song.song_id && isPlaying) {
@@ -104,7 +107,7 @@ export default function SongScreen() {
     try {
       const { sound: newSound } = await Audio.Sound.createAsync(
         { uri: song.audio_url },
-        { shouldPlay: true, progressUpdateIntervalMillis: 500 }
+        { shouldPlay: true, progressUpdateIntervalMillis: 100 }
       );
       setSound(newSound);
       setSelectedSong(song);
@@ -132,30 +135,29 @@ export default function SongScreen() {
             if (currentTime >= currentLyrics[i].time) newIndex = i;
             else break;
           }
-        }
+        } // LOGIC CẬP NHẬT INDEX VÀ TỰ ĐỘNG CUỘN (TRANG 2)
 
         setCurrentLyricIndex((prevIndex) => {
           if (newIndex !== prevIndex && newIndex !== -1) {
-            if (lyricScrollViewRef.current) {
-              // Tính toán vị trí scroll để căn giữa lyric đang active
+            if (lyricScrollViewRef.current && activePageIndex === 1) {
               const lineHeight = ESTIMATED_LYRIC_LINE_HEIGHT;
-              const currentLinePosition = newIndex * lineHeight;
-
-              // Tính chiều cao khả dụng cho lyrics (trừ đi header, controls và lyrics title)
-              const availableHeight =
-                height -
-                ESTIMATED_HEADER_HEIGHT -
-                ESTIMATED_CONTROLS_HEIGHT -
+              const fixedHeightAboveScroll =
+                insets.top +
+                ESTIMATED_HEADER_HEIGHT +
                 ESTIMATED_LYRICS_TITLE_HEIGHT;
 
-              // Tính vị trí center mục tiêu
-              const targetCenter = availableHeight / 2;
+              const visibleLyricAreaHeight =
+                height - fixedHeightAboveScroll - ESTIMATED_CONTROLS_HEIGHT;
 
-              // Tính offset để dòng hiện tại nằm giữa khu vực hiển thị
-              const offset = Math.max(
-                0,
-                currentLinePosition - targetCenter + lineHeight
-              );
+              const currentLinePosition =
+                newIndex * lineHeight + lyricCenterPadding;
+
+              let offset =
+                currentLinePosition -
+                visibleLyricAreaHeight / 2 +
+                lineHeight / 2;
+
+              offset = Math.max(0, offset);
 
               lyricScrollViewRef.current.scrollTo({
                 y: offset,
@@ -216,17 +218,11 @@ export default function SongScreen() {
     const slideSize = event.nativeEvent.layoutMeasurement.width;
     const index = event.nativeEvent.contentOffset.x / slideSize;
     setActivePageIndex(Math.round(index));
-  };
+  }; // --- Trang 1: Player (ĐÃ DỌN DẸP KÝ TỰ THỪA) ---
 
-  const getArtistName = (artistId: number) => {
-    const artist = DATA.artists.find((art) => art.artist_id === artistId);
-    return artist ? artist.name : "Không rõ nghệ sĩ";
-  };
-
-  // --- Trang 1: Player ---
   const renderPlayerPage = () => {
     if (!selectedSong) return null;
-    const artistName = getArtistName(selectedSong.artist_id);
+    const artistName = selectedSong.artist.name;
 
     return (
       <View style={styles.pageContent}>
@@ -236,40 +232,38 @@ export default function SongScreen() {
         />
         <Text style={styles.modalTitle}>{selectedSong.title}</Text>
         <Text style={styles.modalArtist}>{artistName}</Text>
-
-        {/* Dòng lyric hiện tại */}
+        {/* Dòng lyric hiện tại (TRANG 1) */}
         <Text style={styles.currentLyricText} numberOfLines={2}>
-          {currentLyricIndex > -1 && selectedSong.lyric[currentLyricIndex]
+          {currentLyricIndex > -1 &&
+          selectedSong.lyric &&
+          selectedSong.lyric[currentLyricIndex]
             ? selectedSong.lyric[currentLyricIndex].text
             : "..."}
         </Text>
 
-        {/* Các nút share, list, heart, download */}
         <View style={styles.playerActionsTop}>
           <TouchableOpacity>
             <Ionicons name="share-social-outline" size={24} color="white" />
           </TouchableOpacity>
+
           <TouchableOpacity>
             <Ionicons name="list-outline" size={24} color="white" />
           </TouchableOpacity>
+
           <TouchableOpacity>
             <Ionicons name="heart-outline" size={24} color="white" />
           </TouchableOpacity>
+
           <TouchableOpacity>
             <Ionicons name="download-outline" size={24} color="white" />
           </TouchableOpacity>
         </View>
       </View>
     );
-  };
+  }; // --- Trang 2: Lyrics (ĐÃ DỌN DẸP KÝ TỰ THỪA) ---
 
-  // --- Trang 2: Lyrics ---
   const renderLyricsPage = () => {
     if (!selectedSong || !selectedSong.lyric) return null;
-
-    // Chiều cao padding trên/dưới được tính từ lyricCenterOffset
-    const paddingTopForCenter =
-      lyricCenterOffset - ESTIMATED_LYRIC_LINE_HEIGHT / 2;
 
     return (
       <ImageBackground
@@ -285,17 +279,20 @@ export default function SongScreen() {
             contentContainerStyle={[
               styles.lyricsContainer,
               {
-                // Padding trên để đảm bảo dòng đầu tiên có thể cuộn lên giữa màn hình
-                paddingTop: lyricCenterOffset,
-                // Padding dưới để đảm bảo dòng cuối cùng có thể cuộn lên giữa
-                paddingBottom: lyricCenterOffset,
+                // ÁP DỤNG PADDING DYNAMIC
+                paddingTop: lyricCenterPadding,
+                paddingBottom: lyricCenterPadding,
                 minHeight:
-                  height - ESTIMATED_HEADER_HEIGHT - ESTIMATED_CONTROLS_HEIGHT,
+                  height -
+                  insets.top -
+                  ESTIMATED_HEADER_HEIGHT -
+                  ESTIMATED_CONTROLS_HEIGHT -
+                  ESTIMATED_LYRICS_TITLE_HEIGHT,
               },
             ]}
             showsVerticalScrollIndicator={false}
           >
-            {selectedSong.lyric.map((line, index) => (
+            {selectedSong.lyric.map((line: LyricLine, index: number) => (
               <Text
                 key={index}
                 style={[
@@ -310,17 +307,18 @@ export default function SongScreen() {
         </View>
       </ImageBackground>
     );
-  };
+  }; // --- MAIN RENDER ---
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       <Text style={styles.header}>Danh sách bài hát</Text>
+
       <FlatList
-        data={DATA.songs}
+        data={songs || []}
         keyExtractor={(item) => item.song_id.toString()}
         renderItem={({ item }) => {
-          const artistName = getArtistName(item.artist_id);
+          const artistName = item.artist.name;
           return (
             <TouchableOpacity
               style={[
@@ -330,10 +328,12 @@ export default function SongScreen() {
               onPress={() => playSong(item)}
             >
               <Image source={{ uri: item.image_url }} style={styles.cover} />
+
               <View style={styles.cardInfo}>
                 <Text style={styles.title}>{item.title}</Text>
                 <Text style={styles.artist}>{artistName}</Text>
               </View>
+
               {selectedSong?.song_id === item.song_id && isPlaying && (
                 <Ionicons
                   name="volume-medium-outline"
@@ -345,7 +345,6 @@ export default function SongScreen() {
           );
         }}
       />
-
       {/* --- MODAL PLAYER --- */}
       {selectedSong && (
         <Modal animationType="slide" visible={true} onRequestClose={closeModal}>
@@ -365,6 +364,7 @@ export default function SongScreen() {
                     activePageIndex === 0 && styles.activePaginationDot,
                   ]}
                 />
+
                 <View
                   style={[
                     styles.paginationDot,
@@ -377,8 +377,8 @@ export default function SongScreen() {
                 <Ionicons name="ellipsis-vertical" size={24} color="white" />
               </TouchableOpacity>
             </View>
-
             {/* FlatList cho các trang (Player / Lyrics) */}
+
             <FlatList
               ref={flatListRef}
               data={[1, 2]}
@@ -392,7 +392,6 @@ export default function SongScreen() {
               onScroll={onScroll}
               scrollEventThrottle={16}
             />
-
             {/* Thanh điều khiển (cố định ở dưới) */}
             <View
               style={[
@@ -404,6 +403,7 @@ export default function SongScreen() {
                 <Text style={styles.timeText}>
                   {formatTime(positionMillis)}
                 </Text>
+
                 <Slider
                   style={styles.slider}
                   value={positionMillis}
@@ -415,6 +415,7 @@ export default function SongScreen() {
                   onSlidingStart={onSeekStart}
                   onSlidingComplete={onSeekComplete}
                 />
+
                 <Text style={styles.timeText}>
                   {formatTime(durationMillis)}
                 </Text>
@@ -428,9 +429,11 @@ export default function SongScreen() {
                     color="white"
                   />
                 </TouchableOpacity>
+
                 <TouchableOpacity>
                   <Ionicons name="play-skip-back" size={32} color="white" />
                 </TouchableOpacity>
+
                 <TouchableOpacity
                   onPress={togglePlayPause}
                   style={styles.playButton}
@@ -441,9 +444,11 @@ export default function SongScreen() {
                     color="#000"
                   />
                 </TouchableOpacity>
+
                 <TouchableOpacity>
                   <Ionicons name="play-skip-forward" size={32} color="white" />
                 </TouchableOpacity>
+
                 <TouchableOpacity>
                   <MaterialCommunityIcons
                     name="repeat"
@@ -490,7 +495,6 @@ const styles = StyleSheet.create({
   title: { fontSize: 16, fontWeight: "bold", color: "#fff" },
   artist: { fontSize: 13, color: "#aaa" },
 
-  // --- Modal Structure ---
   modalContainer: {
     flex: 1,
     backgroundColor: "#0c0c0f",
@@ -502,7 +506,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 10,
     width: "100%",
-    height: ESTIMATED_HEADER_HEIGHT, // Dùng hằng số
+    height: ESTIMATED_HEADER_HEIGHT,
   },
   paginationContainer: {
     flexDirection: "row",
@@ -525,7 +529,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
   },
 
-  // --- Page Content (Player / Lyrics) ---
   pageContent: {
     width: width,
     flex: 1,
@@ -533,7 +536,6 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
 
-  // --- Page 1: Player (Ảnh 3) ---
   modalCover: {
     width: width * 0.7,
     height: width * 0.7,
@@ -571,7 +573,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
 
-  // --- Page 2: Lyrics ---
   lyricsBackground: {
     width: width,
     flex: 1,
@@ -596,9 +597,7 @@ const styles = StyleSheet.create({
   lyricsContainer: {
     alignItems: "center",
     paddingHorizontal: 20,
-    justifyContent: "center",
     flexGrow: 1,
-    // THAY ĐỔI: Đảm bảo container có đủ không gian để căn giữa
     minHeight:
       height -
       ESTIMATED_HEADER_HEIGHT -
@@ -618,7 +617,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
 
-  // --- Controls Wrapper (Cố định) ---
   controlsWrapper: {
     position: "absolute",
     bottom: 0,
@@ -626,7 +624,7 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: "#0c0c0f",
     paddingTop: 15,
-    paddingBottom: 30, // Tăng padding bottom để không bị sát màn hình
+    paddingBottom: 30,
     borderTopWidth: 1,
     borderTopColor: "#1e1e1e",
     height: ESTIMATED_CONTROLS_HEIGHT,
