@@ -1,8 +1,10 @@
 import { COLORS } from "@/constants/Colors";
 import { useAudio } from "@/contexts/AudioContext";
 import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { PlayerModal } from "../songs/PlayerModal";
 
 const nowPlayingBarStyles = StyleSheet.create({
   nowPlayingContainer: {
@@ -38,53 +40,87 @@ const nowPlayingBarStyles = StyleSheet.create({
 const NowPlayingBar: React.FC = () => {
   const insets = useSafeAreaInsets();
   const TAB_BAR_HEIGHT = 70;
-  const { currentSong, isPlaying, togglePlayPause, playNext, playPrevious } =
-    useAudio();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const {
+    currentSong,
+    isPlaying,
+    togglePlayPause,
+    playNext,
+    playPrevious,
+    positionMillis,
+    durationMillis,
+    currentLyricIndex,
+    seekTo,
+  } = useAudio();
+
   if (!currentSong) return null;
 
   return (
-    <View
-      style={[
-        nowPlayingBarStyles.nowPlayingContainer,
-        { bottom: insets.bottom + TAB_BAR_HEIGHT },
-      ]}
-    >
-      <Image
-        source={{ uri: currentSong.image_url }}
-        style={nowPlayingBarStyles.nowPlayingImage}
-      />
-      <View style={nowPlayingBarStyles.nowPlayingText}>
-        <Text style={nowPlayingBarStyles.nowPlayingTitle} numberOfLines={1}>
-          {currentSong.title}
-        </Text>
-        <Text style={{ color: COLORS.secondaryText }} numberOfLines={1}>
-          {currentSong.artist?.name ?? ""}
-        </Text>
+    <>
+      <View
+        style={[
+          nowPlayingBarStyles.nowPlayingContainer,
+          { bottom: insets.bottom + TAB_BAR_HEIGHT },
+        ]}
+      >
+        <TouchableOpacity
+          style={{ flexDirection: "row", flex: 1 }}
+          onPress={() => setIsModalVisible(true)}
+        >
+          <Image
+            source={{ uri: currentSong.image_url }}
+            style={nowPlayingBarStyles.nowPlayingImage}
+          />
+          <View style={nowPlayingBarStyles.nowPlayingText}>
+            <Text style={nowPlayingBarStyles.nowPlayingTitle} numberOfLines={1}>
+              {currentSong.title}
+            </Text>
+            <Text style={{ color: COLORS.secondaryText }} numberOfLines={1}>
+              {currentSong.artist?.name ?? ""}
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={playPrevious}>
+          <Ionicons name="play-skip-back" size={22} color={COLORS.background} />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={togglePlayPause}
+          style={nowPlayingBarStyles.nowPlayingControls}
+        >
+          <Ionicons
+            name={isPlaying ? "pause" : "play"}
+            size={22}
+            color={COLORS.background}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={playNext}>
+          <Ionicons
+            name="play-skip-forward"
+            size={22}
+            color={COLORS.background}
+          />
+        </TouchableOpacity>
       </View>
 
-      <TouchableOpacity onPress={playPrevious}>
-        <Ionicons name="play-skip-back" size={22} color={COLORS.background} />
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={togglePlayPause}
-        style={nowPlayingBarStyles.nowPlayingControls}
-      >
-        <Ionicons
-          name={isPlaying ? "pause" : "play"}
-          size={22}
-          color={COLORS.background}
+      {isModalVisible && (
+        <PlayerModal
+          selectedSong={currentSong}
+          isPlaying={isPlaying}
+          positionMillis={positionMillis}
+          durationMillis={durationMillis}
+          currentLyricIndex={currentLyricIndex}
+          onClose={() => setIsModalVisible(false)}
+          onSeekStart={() => {}}
+          onSeekComplete={(position) => seekTo(position)}
+          onPlayPausePress={togglePlayPause}
+          onNext={playNext}
+          onPrevious={playPrevious}
         />
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={playNext}>
-        <Ionicons
-          name="play-skip-forward"
-          size={22}
-          color={COLORS.background}
-        />
-      </TouchableOpacity>
-    </View>
+      )}
+    </>
   );
 };
 

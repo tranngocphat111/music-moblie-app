@@ -26,6 +26,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 16,
+    padding: 8,
+    borderRadius: 8,
+  },
+  selectedSongItem: {
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   songIndex: {
     fontSize: 16,
@@ -78,7 +83,10 @@ const RecentlyMusic: React.FC = () => {
         songs.map((item, index) => (
           <TouchableOpacity
             key={`${item._id ?? item.song_id ?? index}`}
-            style={styles.songItem}
+            style={[
+              styles.songItem,
+              audio.currentIndex === index && styles.selectedSongItem,
+            ]}
             onPress={async () => {
               try {
                 await audio.playSong(item, index, songs);
