@@ -16,7 +16,7 @@ export default function Index() {
       </Text>
 
       <Link
-        href="/home/HomeScreen"
+        href="/home/home-screen"
         style={{ marginTop: 20, color: "#1DB954", fontSize: 18 }}
       >
         👉 Đi tới trang Home

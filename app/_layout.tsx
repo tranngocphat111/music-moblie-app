@@ -12,9 +12,9 @@ export default function RootLayout() {
           contentStyle: { backgroundColor: "#0a0e27" }, // màu nền mặc định
         }}
       >
-        {/* Expo Router sẽ tự động thêm các màn hình trong /app */}
+        Expo Router sẽ tự động thêm các màn hình trong /app
         <Stack.Screen name="index" />
-        <Stack.Screen name="home/HomeScreen" />
+        <Stack.Screen name="home/home-screen" />
         <Stack.Screen name="search/SearchScreen" />
         <Stack.Screen name="(onboarding)" />
         <Stack.Screen name="(auths)" />
