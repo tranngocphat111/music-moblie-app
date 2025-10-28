@@ -78,7 +78,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     setIsLoading(true);
     setError(null); // Xóa lỗi cũ
     try {
-      // Giả định loginUser(email, password) là đúng
       const data: AuthResponse = await loginUser(email, password);
 
       await SecureStore.setItemAsync("userToken", data.token);
