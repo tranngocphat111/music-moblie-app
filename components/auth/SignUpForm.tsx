@@ -5,21 +5,49 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Alert, // <--- THÊM: Để hiển thị cảnh báo
+  ActivityIndicator, // <--- THÊM: Để hiển thị trạng thái tải
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useAuth } from "../../contexts/AuthContext"; // <--- THÊM: Import hook useAuth
 
 export default function SignUpForm() {
   const router = useRouter();
+  // Lấy các hàm và trạng thái cần thiết từ AuthContext
+  const { signUp, isLoading, error, clearError } = useAuth(); // <--- THÊM
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [secureText, setSecureText] = useState(true);
 
-  const handleSignUp = () => {
-    // ... (Thêm logic đăng ký ở đây với name, email, password) ...
-    console.log("Sign up attempt with:", name, email, password);
-    // router.replace("/home"); // Chuyển đến màn hình chính
+  const handleSignUp = async () => {
+    // <--- THÊM: Thêm async
+    // 1. Kiểm tra đầu vào cơ bản
+    if (!name || !email || !password) {
+      Alert.alert("Lỗi", "Vui lòng điền đầy đủ Tên, Email và Mật khẩu.");
+      return;
+    }
+
+    try {
+      // 2. Gọi hàm đăng ký từ Context
+      await signUp({ username: name, email, password }); // Giả định API/Context dùng 'username'
+
+      // Ghi chú: Nếu đăng ký thành công, AuthContext (như trong RootLayout)
+      // sẽ tự động điều hướng đến '/home/home-screen'
+      // Nếu bạn muốn hiển thị thông báo thành công:
+      Alert.alert("Thành công", "Đăng ký thành công! Bạn đã được đăng nhập.");
+    } catch (err) {
+      // 3. Xử lý lỗi
+      Alert.alert(
+        "Lỗi Đăng Ký",
+        error?.message ||
+          (err instanceof Error
+            ? err.message
+            : "Đã xảy ra lỗi không xác định khi đăng ký.")
+      );
+    }
   };
 
   return (
@@ -88,9 +116,21 @@ export default function SignUpForm() {
         </View>
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-        <Text style={styles.buttonText}>SIGN UP</Text>
+      {/* Submit Button */}
+      <TouchableOpacity
+        style={[styles.button, isLoading && styles.buttonDisabled]} // <--- THAY ĐỔI: Thêm style khi đang tải
+        onPress={handleSignUp}
+        disabled={isLoading} // <--- THAY ĐỔI: Vô hiệu hóa nút khi đang tải
+      >
+        {isLoading ? ( // <--- THAY ĐỔI: Hiển thị ActivityIndicator khi đang tải
+          <ActivityIndicator color="#000" />
+        ) : (
+          <Text style={styles.buttonText}>SIGN UP</Text>
+        )}
       </TouchableOpacity>
+
+      {/* Hiển thị lỗi từ Context nếu có */}
+      {error && <Text style={styles.errorText}>{error.message}</Text>}
     </View>
   );
 }
@@ -128,11 +168,23 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     borderRadius: 30,
     alignItems: "center",
-    marginBottom: 30,
+    marginBottom: 10, // Giảm marginBottom để chừa chỗ cho errorText
+  },
+  buttonDisabled: {
+    // <--- THÊM: Style cho nút bị vô hiệu hóa
+    backgroundColor: "#868686",
+    opacity: 0.7,
   },
   buttonText: {
     color: "#000",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  errorText: {
+    // <--- THÊM: Style cho thông báo lỗi
+    color: "#ff6b6b",
+    textAlign: "center",
+    marginBottom: 20,
+    fontSize: 14,
   },
 });

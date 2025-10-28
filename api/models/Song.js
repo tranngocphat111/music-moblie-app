@@ -22,7 +22,6 @@ const LyricSchema = new Schema({
 
 // Đây là Schema chính cho Song
 const SongSchema = new Schema({
-    _id: String,
     song_id: { type: Number, required: true, unique: true },
     title: { type: String, required: true },
     duration: Number,

@@ -1,4 +1,5 @@
 import { COLORS } from "@/constants/Colors";
+import { useAudio } from "@/contexts/AudioContext";
 import { useFetchSongs } from "@/hooks/useFetchSongs";
 import { Feather } from "@expo/vector-icons";
 import {
@@ -54,6 +55,7 @@ const styles = StyleSheet.create({
 
 const RecentlyMusic: React.FC = () => {
   const { songs, isLoading, error } = useFetchSongs();
+  const audio = useAudio();
 
   return (
     <View style={styles.sectionContainer}>
@@ -74,8 +76,18 @@ const RecentlyMusic: React.FC = () => {
       {!isLoading &&
         !error &&
         songs.map((item, index) => (
-          <TouchableOpacity key={item._id} style={styles.songItem}>
-            <Text style={styles.songIndex}>{`0${index + 1}`}</Text>
+          <TouchableOpacity
+            key={`${item._id ?? item.song_id ?? index}`}
+            style={styles.songItem}
+            onPress={async () => {
+              try {
+                await audio.playSong(item, index, songs);
+              } catch (e) {
+                console.error("Failed to play song from RecentlyMusic", e);
+              }
+            }}
+          >
+            <Text style={styles.songIndex}>{`${index + 1}`}</Text>
             <Image source={{ uri: item.image_url }} style={styles.songImage} />
             <View style={styles.songTextContainer}>
               <Text style={styles.songTitle} numberOfLines={1}>

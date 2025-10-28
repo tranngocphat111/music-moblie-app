@@ -1,6 +1,7 @@
 import { COLORS } from "@/constants/Colors";
+import { useAudio } from "@/contexts/AudioContext";
 import { Ionicons } from "@expo/vector-icons";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const nowPlayingBarStyles = StyleSheet.create({
@@ -37,6 +38,9 @@ const nowPlayingBarStyles = StyleSheet.create({
 const NowPlayingBar: React.FC = () => {
   const insets = useSafeAreaInsets();
   const TAB_BAR_HEIGHT = 70;
+  const { currentSong, isPlaying, togglePlayPause, playNext, playPrevious } =
+    useAudio();
+  if (!currentSong) return null;
 
   return (
     <View
@@ -46,22 +50,40 @@ const NowPlayingBar: React.FC = () => {
       ]}
     >
       <Image
-        source={{
-          uri: "https://images.unsplash.com/photo-1544085311-11a028465b03?w=50&h=50&fit=crop",
-        }}
+        source={{ uri: currentSong.image_url }}
         style={nowPlayingBarStyles.nowPlayingImage}
       />
       <View style={nowPlayingBarStyles.nowPlayingText}>
-        <Text style={nowPlayingBarStyles.nowPlayingTitle}>Come Back Home</Text>
+        <Text style={nowPlayingBarStyles.nowPlayingTitle} numberOfLines={1}>
+          {currentSong.title}
+        </Text>
+        <Text style={{ color: COLORS.secondaryText }} numberOfLines={1}>
+          {currentSong.artist?.name ?? ""}
+        </Text>
       </View>
-      <Ionicons name="play-skip-back" size={22} color={COLORS.background} />
-      <Ionicons
-        name="play"
-        size={22}
-        color={COLORS.background}
+
+      <TouchableOpacity onPress={playPrevious}>
+        <Ionicons name="play-skip-back" size={22} color={COLORS.background} />
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={togglePlayPause}
         style={nowPlayingBarStyles.nowPlayingControls}
-      />
-      <Ionicons name="play-skip-forward" size={22} color={COLORS.background} />
+      >
+        <Ionicons
+          name={isPlaying ? "pause" : "play"}
+          size={22}
+          color={COLORS.background}
+        />
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={playNext}>
+        <Ionicons
+          name="play-skip-forward"
+          size={22}
+          color={COLORS.background}
+        />
+      </TouchableOpacity>
     </View>
   );
 };
