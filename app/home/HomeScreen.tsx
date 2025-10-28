@@ -1,13 +1,7 @@
 import { Stack } from "expo-router";
 import React from "react";
-import {
-  ScrollView,
-  StatusBar,
-  StyleSheet
-} from "react-native";
-import {
-  SafeAreaView
-} from "react-native-safe-area-context";
+import { ScrollView, StatusBar, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 // import Feather from "react-native-vector-Ioniconss/Feather";
 // import Ionicons from "react-native-vector-Ioniconss/IonIoniconss";
 
@@ -20,7 +14,6 @@ import NowPlayingBar from "@/components/NowPlayingBar";
 import RecentlyMusic from "@/components/RecentlyMusic";
 import TabBar from "@/components/TabBar";
 import { useFetchSongs } from "@/hooks/useFetchSongs";
-
 
 const styles = StyleSheet.create({
   sectionContainer: {
