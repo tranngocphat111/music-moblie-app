@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   FlatList,
@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { PlayerControls } from "./PlayerControls";
 
 const { width, height } = Dimensions.get("window");
@@ -38,6 +38,8 @@ interface PlayerModalProps {
   onSeekStart: () => void;
   onSeekComplete: (value: number) => void;
   onPlayPausePress: () => void;
+  onNext: () => void;
+  onPrevious: () => void;
 }
 
 export function PlayerModal({
@@ -50,22 +52,52 @@ export function PlayerModal({
   onSeekStart,
   onSeekComplete,
   onPlayPausePress,
+  onNext,
+  onPrevious,
 }: PlayerModalProps) {
   const insets = useSafeAreaInsets();
   const flatListRef = useRef<FlatList>(null);
   const lyricScrollViewRef = useRef<ScrollView>(null);
   const [activePageIndex, setActivePageIndex] = useState(0);
+  const [scrollViewLayout, setScrollViewLayout] = useState({ height: 0 });
 
-  const lyricCenterPadding = Math.max(
-    0,
-    (height -
-      (insets.top +
-        ESTIMATED_HEADER_HEIGHT +
-        ESTIMATED_LYRICS_TITLE_HEIGHT +
-        ESTIMATED_CONTROLS_HEIGHT)) /
-      2 -
-      ESTIMATED_LYRIC_LINE_HEIGHT / 2
-  );
+  const handleLyricPress = (time: number, index: number) => {
+    // Single tap - seek to this position
+    onSeekComplete(time);
+  };
+
+  // Auto scroll lyrics to center the CURRENT PLAYING LINE when currentLyricIndex changes
+  useEffect(() => {
+    if (
+      currentLyricIndex > -1 &&
+      lyricScrollViewRef.current &&
+      activePageIndex === 1 &&
+      selectedSong?.lyric &&
+      scrollViewLayout.height > 0
+    ) {
+      // Each lyric line: lineHeight (20) + marginBottom (26) = 46px
+      const LINE_HEIGHT = 46;
+
+      // Calculate the Y position of the current lyric line from the top of content
+      const currentLyricY = currentLyricIndex * LINE_HEIGHT;
+
+      // To center the current line in the middle of the viewport:
+      // We want the line to be at (scrollViewHeight / 2) - (LINE_HEIGHT / 2) from the top of viewport
+      // So we need to scroll to: currentLyricY - (scrollViewHeight / 2) + (LINE_HEIGHT / 2)
+      const targetScrollY =
+        currentLyricY - scrollViewLayout.height / 2 + LINE_HEIGHT / 2;
+
+      lyricScrollViewRef.current?.scrollTo({
+        y: Math.max(0, targetScrollY),
+        animated: true,
+      });
+    }
+  }, [
+    currentLyricIndex,
+    activePageIndex,
+    selectedSong,
+    scrollViewLayout.height,
+  ]);
 
   const onScroll = (event: any) => {
     const slideSize = event.nativeEvent.layoutMeasurement.width;
@@ -90,7 +122,7 @@ export function PlayerModal({
           selectedSong.lyric &&
           selectedSong.lyric[currentLyricIndex]
             ? selectedSong.lyric[currentLyricIndex].text
-            : "..."}
+            : ""}
         </Text>
 
         <View style={styles.playerActionsTop}>
@@ -125,31 +157,28 @@ export function PlayerModal({
           <ScrollView
             ref={lyricScrollViewRef}
             style={styles.lyricsScrollView}
-            contentContainerStyle={[
-              styles.lyricsContainer,
-              {
-                paddingTop: lyricCenterPadding,
-                paddingBottom: lyricCenterPadding,
-                minHeight:
-                  height -
-                  insets.top -
-                  ESTIMATED_HEADER_HEIGHT -
-                  ESTIMATED_CONTROLS_HEIGHT -
-                  ESTIMATED_LYRICS_TITLE_HEIGHT,
-              },
-            ]}
+            contentContainerStyle={styles.lyricsContainer}
             showsVerticalScrollIndicator={false}
+            onLayout={(event) => {
+              const { height } = event.nativeEvent.layout;
+              setScrollViewLayout({ height });
+            }}
           >
             {selectedSong.lyric.map((line: LyricLine, index: number) => (
-              <Text
+              <TouchableOpacity
                 key={index}
-                style={[
-                  styles.lyricLine,
-                  index === currentLyricIndex && styles.highlightedLyric,
-                ]}
+                onPress={() => handleLyricPress(line.time, index)}
+                activeOpacity={0.7}
               >
-                {line.text}
-              </Text>
+                <Text
+                  style={[
+                    styles.lyricLine,
+                    index === currentLyricIndex && styles.highlightedLyric,
+                  ]}
+                >
+                  {line.text}
+                </Text>
+              </TouchableOpacity>
             ))}
           </ScrollView>
         </View>
@@ -161,28 +190,30 @@ export function PlayerModal({
 
   return (
     <Modal animationType="slide" visible={true} onRequestClose={onClose}>
-      <SafeAreaView style={[styles.modalContainer, { paddingTop: insets.top }]}>
-        <View style={[styles.headerContainer, { marginBottom: 10 }]}>
-          <TouchableOpacity onPress={onClose} style={{ padding: 8 }}>
-            <Ionicons name="arrow-back" size={24} color="white" />
-          </TouchableOpacity>
-          <View style={styles.paginationContainer}>
-            <View
-              style={[
-                styles.paginationDot,
-                activePageIndex === 0 && styles.activePaginationDot,
-              ]}
-            />
-            <View
-              style={[
-                styles.paginationDot,
-                activePageIndex === 1 && styles.activePaginationDot,
-              ]}
-            />
+      <View style={styles.modalContainer}>
+        <View style={{ paddingTop: insets.top, backgroundColor: "#0a0a0a" }}>
+          <View style={styles.headerContainer}>
+            <TouchableOpacity onPress={onClose} style={{ padding: 8 }}>
+              <Ionicons name="arrow-back" size={24} color="white" />
+            </TouchableOpacity>
+            <View style={styles.paginationContainer}>
+              <View
+                style={[
+                  styles.paginationDot,
+                  activePageIndex === 0 && styles.activePaginationDot,
+                ]}
+              />
+              <View
+                style={[
+                  styles.paginationDot,
+                  activePageIndex === 1 && styles.activePaginationDot,
+                ]}
+              />
+            </View>
+            <TouchableOpacity style={{ padding: 8 }}>
+              <Ionicons name="ellipsis-vertical" size={24} color="white" />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity style={{ padding: 8 }}>
-            <Ionicons name="ellipsis-vertical" size={24} color="white" />
-          </TouchableOpacity>
         </View>
 
         <FlatList
@@ -199,15 +230,21 @@ export function PlayerModal({
           scrollEventThrottle={16}
         />
 
-        <PlayerControls
-          isPlaying={isPlaying}
-          positionMillis={positionMillis}
-          durationMillis={durationMillis}
-          onSeekStart={onSeekStart}
-          onSeekComplete={onSeekComplete}
-          onPlayPausePress={onPlayPausePress}
-        />
-      </SafeAreaView>
+        <View
+          style={{ paddingBottom: insets.bottom, backgroundColor: "#0c0c0f" }}
+        >
+          <PlayerControls
+            isPlaying={isPlaying}
+            positionMillis={positionMillis}
+            durationMillis={durationMillis}
+            onSeekStart={onSeekStart}
+            onSeekComplete={onSeekComplete}
+            onPlayPausePress={onPlayPausePress}
+            onNext={onNext}
+            onPrevious={onPrevious}
+          />
+        </View>
+      </View>
     </Modal>
   );
 }
@@ -215,14 +252,14 @@ export function PlayerModal({
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    backgroundColor: "#0c0c0f",
+    backgroundColor: "#0a0a0a",
   },
   headerContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 20,
-    paddingTop: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     width: "100%",
     height: ESTIMATED_HEADER_HEIGHT,
   },
@@ -237,56 +274,70 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   paginationDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginHorizontal: 3,
-    backgroundColor: "#888",
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    marginHorizontal: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
   },
   activePaginationDot: {
-    backgroundColor: "#FFF",
+    width: 20,
+    backgroundColor: "#fff",
   },
   pageContent: {
     width: width,
     flex: 1,
     alignItems: "center",
     paddingBottom: 20,
+    justifyContent: "center",
   },
   modalCover: {
-    width: width * 0.7,
-    height: width * 0.7,
-    borderRadius: (width * 0.7) / 2,
-    marginVertical: 40,
+    width: width * 0.85,
+    height: width * 0.85,
+    borderRadius: 16,
+    marginVertical: 30,
     alignSelf: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 16,
+    elevation: 12,
   },
   modalTitle: {
-    fontSize: 28,
-    fontWeight: "bold",
+    fontSize: 26,
+    fontWeight: "700",
     textAlign: "center",
     paddingHorizontal: 30,
     color: "#fff",
+    marginTop: 20,
+    marginBottom: 8,
   },
   modalArtist: {
-    fontSize: 18,
-    color: "#ccc",
-    textAlign: "center",
-    marginBottom: 16,
-  },
-  currentLyricText: {
-    fontSize: 14,
-    color: "#9DFE00",
+    fontSize: 16,
+    color: "rgba(255, 255, 255, 0.7)",
     textAlign: "center",
     marginBottom: 20,
-    paddingHorizontal: 30,
-    height: 40,
-    lineHeight: 20,
+  },
+  currentLyricText: {
+    fontSize: 16,
+    color: "#1DB954",
+    textAlign: "center",
+    marginBottom: 20,
+    paddingHorizontal: 40,
+    minHeight: 40,
+    lineHeight: 22,
+    fontWeight: "600",
   },
   playerActionsTop: {
     flexDirection: "row",
     justifyContent: "space-around",
-    width: "100%",
-    paddingHorizontal: 40,
-    marginVertical: 10,
+    width: "80%",
+    paddingHorizontal: 20,
+    marginTop: 10,
+    marginBottom: 20,
   },
   lyricsBackground: {
     width: width,
@@ -295,15 +346,16 @@ const styles = StyleSheet.create({
   },
   lyricsOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    backgroundColor: "rgba(0, 0, 0, 0.85)",
     alignItems: "center",
   },
   lyricsHeader: {
-    fontSize: 22,
-    fontWeight: "bold",
+    fontSize: 20,
+    fontWeight: "700",
     color: "#fff",
-    marginVertical: 15,
-    height: ESTIMATED_LYRICS_TITLE_HEIGHT - 40,
+    marginTop: 20,
+    marginBottom: 20,
+    letterSpacing: 1,
   },
   lyricsScrollView: {
     width: "100%",
@@ -311,19 +363,19 @@ const styles = StyleSheet.create({
   },
   lyricsContainer: {
     alignItems: "center",
-    paddingHorizontal: 20,
-    flexGrow: 1,
+    paddingHorizontal: 30,
   },
   lyricLine: {
-    fontSize: 18,
-    color: "#eee",
+    fontSize: 16,
+    color: "rgba(255, 255, 255, 0.4)",
     textAlign: "center",
-    marginBottom: 16,
-    lineHeight: 24,
+    marginBottom: 26,
+    lineHeight: 20,
+    paddingHorizontal: 10,
   },
   highlightedLyric: {
-    color: "#9DFE00",
-    fontWeight: "bold",
-    fontSize: 20,
+    color: "#1DB954",
+    fontSize: 18,
+    marginBottom: 26,
   },
 });
