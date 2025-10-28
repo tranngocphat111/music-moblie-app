@@ -1,3 +1,4 @@
+// contexts/AuthContext.tsx
 import React, {
   createContext,
   useState,
@@ -24,45 +25,48 @@ interface AuthContextType {
   token: string | null;
   isLoading: boolean;
   signIn: (credentials: AuthCredentials) => Promise<User>;
-  signUp: (data: any) => Promise<User>; // Giữ data: any cho đến khi định nghĩa rõ ràng
+  signUp: (data: {
+    username: string;
+    email: string;
+    password: string;
+  }) => Promise<User>;
   signOut: () => Promise<void>;
-  error: Error | null; // THÊM: Trạng thái lỗi để hiển thị trong form
-  clearError: () => void; // THÊM: Hàm xóa lỗi
+  error: Error | null;
+  clearError: () => void;
 }
 
-// Khởi tạo Context với giá trị mặc định
+const TOKEN_KEY = "authToken"; // TÊN THỐNG NHẤT
+
 export const AuthContext = createContext<AuthContextType | null>(null);
 
-// Component Provider
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null); // THÊM: State quản lý lỗi
+  const [error, setError] = useState<Error | null>(null);
 
-  // Xóa lỗi
   const clearError = () => setError(null);
 
+  // TẢI LẠI TRẠNG THÁI KHI MỞ APP
   useEffect(() => {
     const loadInitialState = async () => {
       try {
-        const storedToken = await SecureStore.getItemAsync("userToken");
+        const storedToken = await SecureStore.getItemAsync(TOKEN_KEY);
         if (storedToken) {
           setToken(storedToken);
           try {
             const fetchedUser = await fetchUserByToken(storedToken);
             setUser(fetchedUser);
           } catch (e) {
-            console.error("Token không hợp lệ hoặc hết hạn:", e);
-            await SecureStore.deleteItemAsync("userToken");
+            console.error("Token không hợp lệ:", e);
+            await SecureStore.deleteItemAsync(TOKEN_KEY);
             setToken(null);
-            setUser(null);
           }
         }
       } catch (e) {
-        console.error("Lỗi khi tải trạng thái xác thực ban đầu:", e);
+        console.error("Lỗi tải token:", e);
       } finally {
         setIsLoading(false);
       }
@@ -70,58 +74,68 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     loadInitialState();
   }, []);
 
+  // ĐĂNG NHẬP
   const signIn = async ({
     email,
     password,
   }: AuthCredentials): Promise<User> => {
     setIsLoading(true);
-    setError(null); // Xóa lỗi cũ
+    clearError();
     try {
       const data: AuthResponse = await loginUser(email, password);
 
-      await SecureStore.setItemAsync("userToken", data.token);
+      await SecureStore.setItemAsync(TOKEN_KEY, data.token);
       setToken(data.token);
       setUser(data.user);
+
       return data.user;
-    } catch (error: any) {
-      const err =
-        error instanceof Error
-          ? error
-          : new Error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
-      setError(err);
-      throw err;
+    } catch (err: any) {
+      const error =
+        err instanceof Error ? err : new Error("Đăng nhập thất bại");
+      setError(error);
+      throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const signUp = async (data: any): Promise<User> => {
+  // ĐĂNG KÝ
+  const signUp = async (data: {
+    username: string;
+    email: string;
+    password: string;
+  }): Promise<User> => {
     setIsLoading(true);
-    setError(null);
+    clearError();
     try {
       const response: AuthResponse = await registerUser(data);
+
+      // LƯU TOKEN SAU KHI ĐĂNG KÝ
+      await SecureStore.setItemAsync(TOKEN_KEY, response.token);
       setToken(response.token);
       setUser(response.user);
-      return response.user;
-    } catch (error: any) {
-      const err =
-        error instanceof Error
-          ? error
-          : new Error("Đăng ký thất bại. Vui lòng thử lại.");
-      setError(err);
-      throw err;
+
+      return response.user; // TRẢ VỀ USER
+    } catch (err: any) {
+      const error = err instanceof Error ? err : new Error("Đăng ký thất bại");
+      setError(error);
+      throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
+  // ĐĂNG XUẤT
   const signOut = async () => {
     setIsLoading(true);
-    setError(null);
-    await SecureStore.deleteItemAsync("userToken");
-    setToken(null);
-    setUser(null);
-    setIsLoading(false);
+    clearError();
+    try {
+      await SecureStore.deleteItemAsync(TOKEN_KEY);
+    } finally {
+      setToken(null);
+      setUser(null);
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -144,8 +158,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth phải được sử dụng bên trong AuthProvider");
-  }
+  if (!context) throw new Error("useAuth phải dùng trong AuthProvider");
   return context;
 };

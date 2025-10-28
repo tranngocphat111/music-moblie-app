@@ -27,7 +27,7 @@ export default function SignInForm() {
     }
     try {
       await signIn({ email, password });
-      router.push("/home/home-screen");
+      router.replace("/home/home-screen");
     } catch (err) {
       Alert.alert(
         "Lỗi Đăng Nhập",
