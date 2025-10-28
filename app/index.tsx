@@ -35,6 +35,12 @@ export default function Index() {
       >
         🚀 Onboarding
       </Link>
+      <Link
+        href="/songs/SongScreen"
+        style={{ marginTop: 20, color: "#1DB954", fontSize: 18 }}
+      >
+        🎵 Songs
+      </Link>
     </View>
   );
 }
