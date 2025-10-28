@@ -16,9 +16,9 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import FeatherIcon from "react-native-vector-icons/Feather";
-import Icon from "react-native-vector-icons/Ionicons";
-
+// import Feather from "react-native-vector-Ioniconss/Feather";
+// import Ionicons from "react-native-vector-Ioniconss/IonIoniconss";
+import { Feather, Ionicons } from "@expo/vector-icons";
 // --- Khai báo Types (Kiểu dữ liệu) ---
 
 const COLORS = {
@@ -125,11 +125,11 @@ const recentlyMusic: Song[] = [
 
 // --- Components có kiểu dữ liệu ---
 
-// Header: "Geez" và Search Icon
+// Header: "Geez" và Search Ionicons
 const AppHeader: React.FC = () => (
   <View style={styles.headerContainer}>
     <Text style={styles.headerTitle}>Geez</Text>
-    <Icon name="search-outline" size={26} color={COLORS.primaryText} />
+    <Ionicons name="search-outline" size={26} color={COLORS.primaryText} />
   </View>
 );
 
@@ -192,7 +192,7 @@ const GeezWeekly: React.FC = () => (
             <View style={styles.weeklyOverlay}>
               <View style={styles.weeklyBottomBar}>
                 <TouchableOpacity style={styles.weeklyPlayButton}>
-                  <Icon name="play" size={20} color={COLORS.primaryText} />
+                  <Ionicons name="play" size={20} color={COLORS.primaryText} />
                 </TouchableOpacity>
 
                 <View style={styles.weeklyTextContainer}>
@@ -221,11 +221,7 @@ const RecentlyMusic: React.FC = () => (
           <Text style={styles.songTitle}>{item.title}</Text>
           <Text style={styles.songArtist}>{item.artist}</Text>
         </View>
-        <FeatherIcon
-          name="more-horizontal"
-          size={24}
-          color={COLORS.primaryText}
-        />
+        <Feather name="more-horizontal" size={24} color={COLORS.primaryText} />
       </TouchableOpacity>
     ))}
   </View>
@@ -254,14 +250,14 @@ const NowPlayingBar: React.FC = () => {
       <View style={styles.nowPlayingText}>
         <Text style={styles.nowPlayingTitle}>Come Back Home</Text>
       </View>
-      <Icon name="play-skip-back" size={22} color={COLORS.background} />
-      <Icon
+      <Ionicons name="play-skip-back" size={22} color={COLORS.background} />
+      <Ionicons
         name="play"
         size={22}
         color={COLORS.background}
         style={styles.nowPlayingControls}
       />
-      <Icon name="play-skip-forward" size={22} color={COLORS.background} />
+      <Ionicons name="play-skip-forward" size={22} color={COLORS.background} />
     </View>
   );
 };
@@ -273,19 +269,27 @@ const TabBar: React.FC = () => {
   return (
     <View style={[styles.tabBarContainer, { bottom: insets.bottom }]}>
       <TouchableOpacity style={styles.tabItem}>
-        <Icon name="home" size={24} color={COLORS.accent} />
+        <Ionicons name="home" size={24} color={COLORS.accent} />
         <Text style={[styles.tabLabel, { color: COLORS.accent }]}>Home</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.tabItem}>
-        <Icon name="compass-outline" size={24} color={COLORS.secondaryText} />
+        <Ionicons
+          name="compass-outline"
+          size={24}
+          color={COLORS.secondaryText}
+        />
         <Text style={styles.tabLabel}>Explore</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.tabItem}>
-        <Icon name="radio-outline" size={24} color={COLORS.secondaryText} />
+        <Ionicons name="radio-outline" size={24} color={COLORS.secondaryText} />
         <Text style={styles.tabLabel}>Radio</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.tabItem}>
-        <Icon name="person-outline" size={24} color={COLORS.secondaryText} />
+        <Ionicons
+          name="person-outline"
+          size={24}
+          color={COLORS.secondaryText}
+        />
         <Text style={styles.tabLabel}>Account</Text>
       </TouchableOpacity>
     </View>
