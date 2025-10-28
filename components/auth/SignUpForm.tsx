@@ -22,8 +22,6 @@ export default function SignUpForm() {
   const [secureText, setSecureText] = useState(true);
 
   const handleSignUp = async () => {
-    // <--- THÊM: Thêm async
-    // 1. Kiểm tra đầu vào cơ bản
     if (!name || !email || !password) {
       Alert.alert("Lỗi", "Vui lòng điền đầy đủ Tên, Email và Mật khẩu.");
       return;

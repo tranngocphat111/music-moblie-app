@@ -32,7 +32,6 @@ export const loginUser = async (
   return response.json();
 };
 
-
 export const registerUser = async (data: any): Promise<AuthResponse> => {
   const response = await fetch(`${API_URL}/users/sign-up`, {
     method: "POST",
@@ -50,13 +49,12 @@ export const registerUser = async (data: any): Promise<AuthResponse> => {
   return response.json();
 };
 
-
 export const fetchUserByToken = async (token: string): Promise<User> => {
   const response = await fetch(`${API_URL}/users/me`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`, // Quan trọng: Gửi token dưới dạng Bearer
+      Authorization: `Bearer ${token}`,
     },
   });
 
