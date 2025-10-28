@@ -4,10 +4,10 @@ export default function AccountLayout() {
   return (
     <Stack>
       <Stack.Screen
-        name="(account)"
+        name="home-screen"
         options={{
           headerShown: false,
-          title: "Account",
+          title: "Home",
         }}
       />
     </Stack>

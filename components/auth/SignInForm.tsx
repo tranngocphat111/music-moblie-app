@@ -1,4 +1,4 @@
-//components/auth/SignInForm
+// components/auth/SignInForm
 import React, { useState } from "react";
 import {
   View,
@@ -6,20 +6,35 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  ActivityIndicator, // <--- THÊM: Để hiển thị trạng thái tải
+  Alert, // <--- THÊM: Để hiển thị cảnh báo
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useAuth } from "../../contexts/AuthContext"; // <--- THÊM: Import AuthContext
 
 export default function SignInForm() {
   const router = useRouter();
+  // Lấy các hàm và trạng thái từ AuthContext
+  const { signIn, isLoading, error } = useAuth(); // <--- THAY ĐỔI
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [secureText, setSecureText] = useState(true);
 
-  const handleLogin = () => {
-    // ... (Thêm logic đăng nhập ở đây với email, password) ...
-    console.log("Login attempt with:", email, password);
-    // router.replace("/home");
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Lỗi", "Vui lòng điền đầy đủ email và mật khẩu.");
+      return;
+    }
+
+    try {
+      await signIn({ email, password });
+    } catch (err) {
+      Alert.alert(
+        "Lỗi Đăng Nhập",
+        err instanceof Error ? err.message : "Đã xảy ra lỗi không xác định."
+      );
+    }
   };
 
   return (
@@ -76,9 +91,20 @@ export default function SignInForm() {
       </View>
 
       {/* Submit Button */}
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>SIGN IN</Text>
+      <TouchableOpacity
+        style={[styles.button, isLoading && styles.buttonDisabled]} // <--- THAY ĐỔI: Thêm style khi đang tải
+        onPress={handleLogin}
+        disabled={isLoading} // <--- THAY ĐỔI: Vô hiệu hóa nút khi đang tải
+      >
+        {isLoading ? ( // <--- THAY ĐỔI: Hiển thị ActivityIndicator khi đang tải
+          <ActivityIndicator color="#000" />
+        ) : (
+          <Text style={styles.buttonText}>SIGN IN</Text>
+        )}
       </TouchableOpacity>
+
+      {/* Hiển thị lỗi từ Context nếu có */}
+      {error && <Text style={styles.errorText}>{error.message}</Text>}
     </View>
   );
 }
@@ -121,11 +147,23 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     borderRadius: 30,
     alignItems: "center",
-    marginBottom: 30,
+    marginBottom: 10, // Giảm marginBottom để chừa chỗ cho errorText
+  },
+  buttonDisabled: {
+    // <--- THÊM: Style cho nút bị vô hiệu hóa
+    backgroundColor: "#868686",
+    opacity: 0.7,
   },
   buttonText: {
     color: "#000",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  errorText: {
+    // <--- THÊM: Style cho thông báo lỗi
+    color: "#ff6b6b",
+    textAlign: "center",
+    marginBottom: 20,
+    fontSize: 14,
   },
 });

@@ -16,12 +16,18 @@ export default function Index() {
       </Text>
 
       <Link
-        href="/home/home-screen"
+        href="/home-screen"
         style={{ marginTop: 20, color: "#1DB954", fontSize: 18 }}
       >
         👉 Đi tới trang Home
       </Link>
 
+      <Link
+        href="/(modals)/search"
+        style={{ marginTop: 20, color: "#1DB954", fontSize: 18 }}
+      >
+        🔍 Đi tới trang Search
+      </Link>
 
       <Link
         href="/(onboarding)"
@@ -35,12 +41,12 @@ export default function Index() {
       >
         🎵 Songs
       </Link>
-      <TouchableOpacity
-        onPress={() => router.push("/(account)")}
-        style={{ marginTop: 20 }}
+      <Link
+        href="/(account)"
+        style={{ marginTop: 20, color: "#1DB954", fontSize: 18 }}
       >
-        <Text style={{ color: "#1DB954", fontSize: 18 }}>🎵 Account</Text>
-      </TouchableOpacity>
+        🎵 Account
+      </Link>
     </View>
   );
 }
