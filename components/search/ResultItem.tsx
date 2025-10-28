@@ -1,11 +1,11 @@
-import { ResultItemProps } from '@/types/search';
+import { ResultItemProps } from '@/types/search/props';
 import React from 'react';
 import {
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 

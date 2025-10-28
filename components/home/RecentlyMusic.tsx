@@ -2,12 +2,12 @@ import { COLORS } from "@/constants/Colors";
 import { useFetchSongs } from "@/hooks/useFetchSongs";
 import { Feather } from "@expo/vector-icons";
 import {
-  ActivityIndicator,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Image,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import SectionHeader from "./SectionHeader";
 

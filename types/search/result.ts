@@ -19,4 +19,7 @@ export interface SearchResult {
   image: string;
   /** Type of the search result */
   type: SearchResultType;
+  /** Original data object */
+  data?: any;
+
 }
