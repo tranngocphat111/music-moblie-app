@@ -13,33 +13,40 @@ const nowPlayingBarStyles = StyleSheet.create({
     right: 10,
     height: 60,
     backgroundColor: COLORS.accent,
-    borderRadius: 12,
+    borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 12,
+    borderWidth: 0,
   },
   nowPlayingImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 48,
+    height: 48,
+    borderRadius: 6,
   },
   nowPlayingText: {
     flex: 1,
-    marginLeft: 10,
+    marginLeft: 12,
   },
   nowPlayingTitle: {
     fontSize: 14,
-    fontWeight: "bold",
-    color: COLORS.background,
+    fontWeight: "700",
+    color: "#000000",
+    marginBottom: 2,
+  },
+  nowPlayingArtist: {
+    fontSize: 12,
+    color: "rgba(0, 0, 0, 0.7)",
+    fontWeight: "500",
   },
   nowPlayingControls: {
-    marginHorizontal: 16,
+    marginHorizontal: 12,
   },
 });
 
 const NowPlayingBar: React.FC = () => {
   const insets = useSafeAreaInsets();
-  const TAB_BAR_HEIGHT = 70;
+  const TAB_BAR_HEIGHT = 80; // Tăng lên để không bị che
   const [isModalVisible, setIsModalVisible] = useState(false);
   const {
     currentSong,
@@ -75,14 +82,14 @@ const NowPlayingBar: React.FC = () => {
             <Text style={nowPlayingBarStyles.nowPlayingTitle} numberOfLines={1}>
               {currentSong.title}
             </Text>
-            <Text style={{ color: COLORS.secondaryText }} numberOfLines={1}>
+            <Text style={nowPlayingBarStyles.nowPlayingArtist} numberOfLines={1}>
               {currentSong.artist?.name ?? ""}
             </Text>
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={playPrevious}>
-          <Ionicons name="play-skip-back" size={22} color={COLORS.background} />
+          <Ionicons name="play-skip-back" size={22} color="#000000" />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -92,7 +99,7 @@ const NowPlayingBar: React.FC = () => {
           <Ionicons
             name={isPlaying ? "pause" : "play"}
             size={22}
-            color={COLORS.background}
+            color="#000000"
           />
         </TouchableOpacity>
 
@@ -100,7 +107,7 @@ const NowPlayingBar: React.FC = () => {
           <Ionicons
             name="play-skip-forward"
             size={22}
-            color={COLORS.background}
+            color="#000000"
           />
         </TouchableOpacity>
       </View>

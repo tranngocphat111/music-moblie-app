@@ -15,25 +15,25 @@ import SectionHeader from "./SectionHeader";
 const styles = StyleSheet.create({
   sectionContainer: {
     marginBottom: 16,
-    minHeight: 190, // Đặt chiều cao để không bị giật khi load
-    paddingVertical: 8, // Thêm padding dọc
+    minHeight: 200,
+    paddingVertical: 8,
   },
   loadingCard: {
-    width: 150,
-    height: 150,
+    width: 160,
+    height: 160,
     marginRight: 16,
-    borderRadius: 20,
-    backgroundColor: COLORS.card, // Dùng màu card thay vì secondary
-    opacity: 0.7,
+    borderRadius: 16,
+    backgroundColor: COLORS.card,
+    opacity: 0.5,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
       },
       android: {
-        elevation: 2,
+        elevation: 4,
       },
     }),
   },
@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
     color: COLORS.error,
     paddingHorizontal: 16,
     marginTop: 20,
+    fontSize: 14,
   }
 });
 

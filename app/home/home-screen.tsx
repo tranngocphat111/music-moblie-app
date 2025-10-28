@@ -1,9 +1,8 @@
+import { LinearGradient } from "expo-linear-gradient";
 import { Stack } from "expo-router";
 import React from "react";
-import { ScrollView, StatusBar, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-// import Feather from "react-native-vector-Ioniconss/Feather";
-// import Ionicons from "react-native-vector-Ioniconss/IonIoniconss";
 
 import { COLORS } from "@/constants/Colors";
 
@@ -34,8 +33,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  gradient: {
+    flex: 1,
+  },
   container: {
     flex: 1,
+    backgroundColor: 'transparent',
   },
   scrollContent: {
     paddingBottom: 160,
@@ -46,22 +49,28 @@ const styles = StyleSheet.create({
 const HomeScreen: React.FC = () => {
   
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
       <Stack.Screen options={{ headerShown: false }} />
-
-      <StatusBar barStyle="light-content" backgroundColor={COLORS.background} />
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.scrollContent}
+      
+      <LinearGradient
+        colors={['#1DB954', '#0d5c2f', '#0a3d1f', '#121212']}
+        locations={[0, 0.15, 0.25, 0.4]}
+        style={styles.gradient}
       >
-        <AppHeader />
-        <NewAlbums />
-        <GeezWeekly />
-        <RecentlyMusic />
-      </ScrollView>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <AppHeader />
+          <NewAlbums />
+          <GeezWeekly />
+          <RecentlyMusic />
+        </ScrollView>
 
-      <NowPlayingBar />
-      <TabBar />
+        <NowPlayingBar />
+        <TabBar />
+      </LinearGradient>
     </SafeAreaView>
   );
 };

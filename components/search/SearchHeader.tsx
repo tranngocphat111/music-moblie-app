@@ -1,6 +1,7 @@
 import { SearchHeaderProps } from '@/types/search';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
+  Animated,
   Keyboard,
   StyleSheet,
   Text,
@@ -20,6 +21,16 @@ const SearchHeader = ({
   onSubmitEditing,
   onBlur,
 }: SearchHeaderProps) => {
+  const focusAnimation = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(focusAnimation, {
+      toValue: isFocused ? 1 : 0,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+  }, [isFocused]);
+
   const handleBlur = () => {
     setIsFocused(false);
     if (onBlur) {
@@ -27,13 +38,25 @@ const SearchHeader = ({
     }
   };
 
+  const borderColor = focusAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.2)'],
+  });
+
   return (
     <View style={styles.header}>
-      <View style={styles.searchContainer}>
+      <Animated.View 
+        style={[
+          styles.searchContainer,
+          {
+            borderColor,
+          }
+        ]}
+      >
         <Text style={styles.searchIcon}>🔍</Text>
         <TextInput
           style={styles.searchInput}
-          placeholder="Search"
+          placeholder="Search songs, artists, albums..."
           placeholderTextColor="#666"
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -43,11 +66,14 @@ const SearchHeader = ({
           returnKeyType="search"
         />
         {searchQuery.length > 0 && (
-          <TouchableOpacity onPress={() => setSearchQuery("")}>
-            <Text style={styles.clearButton}>✕</Text>
+          <TouchableOpacity 
+            onPress={() => setSearchQuery("")}
+            style={styles.clearButton}
+          >
+            <Text style={styles.clearButtonText}>✕</Text>
           </TouchableOpacity>
         )}
-      </View>
+      </Animated.View>
       {showCancelButton && (
         <TouchableOpacity
           onPress={() => {
@@ -77,27 +103,37 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#1a1f3a",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     borderRadius: 12,
-    paddingHorizontal: 12,
-    height: 48,
+    paddingHorizontal: 14,
+    height: 46,
+    borderWidth: 1,
   },
   searchIcon: {
-    fontSize: 20,
-    marginRight: 8,
+    fontSize: 18,
+    marginRight: 10,
+    opacity: 0.6,
   },
   searchInput: {
     flex: 1,
     color: "#fff",
-    fontSize: 16,
+    fontSize: 15,
   },
   clearButton: {
-    color: "#666",
-    fontSize: 18,
-    padding: 4,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  clearButtonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: '600',
   },
   cancelButton: {
-    color: "#c5ff00",
+    color: "#fff",
     fontSize: 16,
     fontWeight: "500",
   },

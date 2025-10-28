@@ -10,11 +10,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 20,
+    paddingHorizontal: 8,
   },
   headerTitle: {
-    fontSize: 32,
-    fontWeight: "bold",
+    fontSize: 28,
+    fontWeight: "700",
     color: COLORS.primaryText,
+  },
+  iconButton: {
+    padding: 8,
   },
 });
 
@@ -28,11 +32,22 @@ const AppHeader: React.FC = () => {
     });
   };
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  };
+
   return (
     <View style={styles.headerContainer}>
       <Text style={styles.headerTitle}>Geez</Text>
-      <TouchableOpacity onPress={handleSearchPress}>
-        <Ionicons name="search-outline" size={26} color={COLORS.primaryText} />
+      <TouchableOpacity 
+        style={styles.iconButton}
+        onPress={handleSearchPress}
+        activeOpacity={0.7}
+      >
+        <Ionicons name="search-outline" size={28} color={COLORS.primaryText} />
       </TouchableOpacity>
     </View>
   );

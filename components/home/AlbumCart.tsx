@@ -3,35 +3,35 @@ import { Album } from "@/types";
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useRef } from "react";
 import {
-  Animated,
-  Easing,
-  ImageBackground,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
+    Animated,
+    Easing,
+    ImageBackground,
+    Platform,
+    Pressable,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 
 const styles = StyleSheet.create({
   albumCardContainer: {
-    width: 150,
+    width: 160,
     marginRight: 16,
-    marginVertical: 8, // Thêm spacing dọc
+    marginVertical: 8,
   },
   albumCard: {
-    width: 150,
-    height: 150,
-    borderRadius: 20,
+    width: 160,
+    height: 160,
+    borderRadius: 16,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.4,
+        shadowRadius: 12,
       },
       android: {
-        elevation: 8,
+        elevation: 12,
       },
     }),
   },
@@ -40,37 +40,38 @@ const styles = StyleSheet.create({
     height: "100%",
     justifyContent: "flex-end",
     overflow: 'hidden',
-    borderRadius: 20,
+    borderRadius: 16,
   },
   gradient: {
     position: 'absolute',
     left: 0,
     right: 0,
     bottom: 0,
-    height: '60%',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    height: '70%',
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
   },
   albumTextOverlay: {
-    padding: 16,
+    padding: 14,
     zIndex: 1,
   },
   albumTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "700",
     color: COLORS.primaryText,
-    marginBottom: 4,
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    marginBottom: 2,
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
     textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
+    textShadowRadius: 4,
   },
   albumArtist: {
-    fontSize: 13,
+    fontSize: 12,
     color: COLORS.primaryText,
-    opacity: 0.9,
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    opacity: 0.85,
+    fontWeight: "500",
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
     textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
+    textShadowRadius: 4,
   },
 });
 
@@ -114,10 +115,10 @@ export const AlbumCard: React.FC<AlbumCardProps> = ({ item }) => {
         <ImageBackground
           source={{ uri: item.image }}
           style={styles.albumImage}
-          imageStyle={{ borderRadius: 20 }}
+          imageStyle={{ borderRadius: 16 }}
         >
           <LinearGradient
-            colors={['transparent', 'rgba(0,0,0,0.8)']}
+            colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
             style={styles.gradient}
           />
           <View style={styles.albumTextOverlay}>

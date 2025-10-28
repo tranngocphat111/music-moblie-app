@@ -1,10 +1,10 @@
 export const COLORS = {
-    background: "#100C2A",
-    card: "#1C183A",
+    background: "#121212",
+    card: "#181818",
     primaryText: "#FFFFFF",
-    secondaryText: "#A09DAE",
-    accent: "#CFFF50",
-    tabBar: "#100C2A",
+    secondaryText: "#B3B3B3",
+    accent: "#1DB954",
+    tabBar: "#000000",
     error: "#FF6B6B",
-    secondaryBackground: "#1C183A",
+    secondaryBackground: "#282828",
   };
