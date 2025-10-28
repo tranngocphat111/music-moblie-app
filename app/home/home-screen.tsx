@@ -7,12 +7,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { COLORS } from "@/constants/Colors";
 
-import AppHeader from "@/components/AppHeader";
-import GeezWeekly from "@/components/GeezWeekly";
-import NewAlbums from "@/components/NewAlbums";
-import NowPlayingBar from "@/components/NowPlayingBar";
-import RecentlyMusic from "@/components/RecentlyMusic";
-import TabBar from "@/components/TabBar";
+import AppHeader from "@/components/home/AppHeader";
+import GeezWeekly from "@/components/home/GeezWeekly";
+import NewAlbums from "@/components/home/NewAlbums";
+import NowPlayingBar from "@/components/home/NowPlayingBar";
+import RecentlyMusic from "@/components/home/RecentlyMusic";
+import TabBar from "@/components/home/TabBar";
 
 const styles = StyleSheet.create({
   sectionContainer: {

@@ -3,14 +3,14 @@ import { Album } from "@/types";
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useRef } from "react";
 import {
-    Animated,
-    Easing,
-    ImageBackground,
-    Platform,
-    Pressable,
-    StyleSheet,
-    Text,
-    View,
+  Animated,
+  Easing,
+  ImageBackground,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 const styles = StyleSheet.create({
