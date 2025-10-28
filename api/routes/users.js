@@ -29,8 +29,10 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// routes/users.js
 router.post("/sign-up", async (req, res) => {
   try {
+    // 1. Kiểm tra email trùng
     const existingUser = await User.findOne({ email: req.body.email });
     if (existingUser) {
       return res.status(400).json({ message: "Email đã được sử dụng." });
@@ -46,7 +48,18 @@ router.post("/sign-up", async (req, res) => {
 
     const newUser = await user.save();
 
+    const token = jwt.sign(
+      {
+        _id: newUser._id,
+        user_id: newUser.user_id,
+        email: newUser.email,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
     res.status(201).json({
+      token,
       user: {
         _id: newUser._id,
         user_id: newUser.user_id,
@@ -55,10 +68,12 @@ router.post("/sign-up", async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(400).json({ message: err.message || "Đăng ký thất bại." });
+    console.error("Lỗi đăng ký:", err);
+    res.status(400).json({
+      message: err.message || "Đăng ký thất bại.",
+    });
   }
 });
-
 router.post("/sign-in", async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user)
